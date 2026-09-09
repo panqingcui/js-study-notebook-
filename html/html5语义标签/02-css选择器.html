@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        /*通配符*/
+        * {
+            color: red;
+            margin: 0;
+            padding: auto;
+
+        }
+        /*类型选择器*/
+        div {
+            color: blue;
+          
+            
+            font-size: 20px;
+        }
+
+        /*类选择器*/
+        .box {
+            color: blue;
+            font-size: 50px;
+        }
+
+        #p {
+            color: red;
+            font-size: 50px;
+        }
+        /*后代选择器*/
+        div p {
+            color: black;
+            font-size: 30px;
+        }
+        /*子代选择器*/
+        div>span {
+             color: black;
+             font-size: 30px;
+        }
+        /*邻接兄弟选择器*/
+        h2+p {
+            color: pink;
+        }
+        /*通用兄弟兄弟选择器*/
+        h3~p {
+            color: pink;
+        }
+
+
+
+    </style>
+</head>
+
+<body>
+    <!--选择器-->
+    <!--标签选择器-->
+    <!--标签选择器-->
+     <h2>普通选择器</h2>
+    <ul>
+        <li> <div> 我是类型选择器dddddd</div></li>
+        <li><p class='box'> 类选择器</p></li>
+        <li><p id='p'> id选择器</p></li>
+    </ul>
+   
+    <!-- 关系选择器 -->
+     <h2>关系选择器</h2>
+    <ul>
+        <li>
+            <div>
+                <p>我是后代选择器</p>
+                <p>我是后代选择器</p>
+            </div>
+        </li>
+        <li>
+            <div>
+                <p>子代选择器,只选择一层</p>
+            <span>
+                我是儿子
+            </span>
+            <p><span> 我是孙子</span></p>
+            </div>
+            
+        </li>
+        <li>
+            <div class ='box'>
+                <p>邻接兄弟选择器</p>
+                <h2>标题</h2>
+                <p>邻接兄弟</p>
+                <p>邻接兄弟</p>
+            </div>
+            
+        </li>
+
+        <li>
+            <div class ='box'>
+                <p>通用兄弟选择器</p>
+                <h3>标题</h3>
+                <p>邻接兄弟</p>
+                <p>邻接兄弟</p>
+                <p>邻接兄弟</p>
+            </div>
+            
+        </li>
+    </ul>
+
+
+</body>
+ </html> 

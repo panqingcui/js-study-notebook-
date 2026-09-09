@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<style>
+		/* 行高，首行缩进修改行高 27px。
+p 修改首行缩进。
+p 修改诗句加粗。
+p 修改诗句水平居中。
+p 给body设置font简写属性。（复制小米即可） */
+		p {
+			line-height: 27px;
+			text-indent: 2px;
+			font-weight: bold;
+			text-align: center;
+		}
+
+		h5 {
+			text-align: center;
+			font-style: italic;
+		}
+	</style>
+</head>
+
+<body>
+	<h3>CSS文本样式</h3>
+
+	<div class="shi">
+		<h5> 登高</h5>
+		<p>【唐】杜甫</p>
+		<p>风急天高猿啸哀，渚清沙白鸟飞回。</p>
+		<p>无边落木萧萧下，不尽长江滚滚来。</p>
+		<p>万里悲秋常作客，百年多病独登台。</p>
+		<p>艰难苦恨繁霜鬓，潦倒新停浊酒杯。</p>
+	</div>
+
+	<div id="qx">
+		<em>我是倾斜</em>
+	</div>
+
+	<button id='button'> 取消倾斜</button>
+
+	<script>
+		document.querySelector('#button').addEventListener('click', function () {
+			document.querySelector('#qx em').style.fontStyle = 'normal';
+			document.querySelector('h5').style.fontStyle = 'normal';
+		})
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        p,
+        h2 {
+            color: red;
+        }
+
+        a {
+            color: black;
+            text-decoration: none;
+        }
+
+        /* 链接伪类 未访问链接 取消下划线  */
+        /* a:link {
+            color: red;
+            text-decoration: none;
+        } */
+
+        /* 已访问链接伪类 */
+        /* a:visited {
+            color: green;
+        } */
+
+        /* 鼠标悬停链接伪类 */
+        a:hover {
+            color: blue;
+            text-decoration: underline;
+        }
+
+        /* 鼠标点击链接伪类 */
+        /* a:active {
+            color: yellow;
+            text-decoration: underline;
+        } */
+    </style>
+</head>
+
+<body>
+    <h3>分组选择器 （多个选择器用逗号隔开）</h1>
+        <p>我是一个段落</p>
+        <p>我是一个段落</p>
+        <p>我是一个段落</p>
+        <p>我是一个段落</p>
+        <p>我是一个段落</p>
+        <p>我是一个段落</p>
+        <h2>我是一个标题</h2>
+        <h3>伪类选择器 特定状态，用户的交互状态或者结构位置第几个，表单伪类（hover, active, focus, visited, link），符号是冒号：</h1>
+            <ul>
+                <li><a href="#">我是一个链接伪类</a></li>
+
+                <li>active 鼠标点击元素时触发</li>
+                <li>focus 元素获得焦点时触发</li>
+                <li>visited 已访问链接时触发</li>
+                <li>link 未访问链接时触发</li>
+            </ul>
+            <h3>结构伪类选择器 选择元素在文档树中的位置，符号是冒号：</h3>
+            <ul id="ul2">
+                <li>:first-child 选择第一个子元素</li>
+                <li>:last-child 选择最后一个子元素</li>
+                <li>:nth-child(2) 选择第2个子元素</li>
+                <li>:nth-child(2n) 选择所有偶数子元素</li>
+                <li>:nth-child(2n+1) 选择所有奇数子元素</li>
+                <li>:nth-child(3n) 选择所有3的倍数子元素</li>
+                <li>:nth-child(3n+1) 选择所有3的倍数子元素，从第1个开始</li>
+                <li>:nth-child(3n+2) 选择所有3的倍数子元素，从第2个开始</li>
+            </ul>
+            <script>
+                // 第一个li 子元素
+                let p1 = document.querySelector('#ul2 li:first-child');
+                p1.style.color = 'blue';
+
+                // 最后一个li 子元素
+                let p2 = document.querySelector('#ul2 li:last-child');
+                p2.style.color = 'green';
+                // 第2个li 子元素
+                let p3 = document.querySelector('#ul2 li:nth-child(2)');
+                p3.style.color = 'red';
+                // 所有偶数子元素
+                let p4 = document.querySelectorAll('#ul2 li:nth-child(2n)');
+                for (let i = 0; i < p4.length; i++) {
+                    p4[i].style.color = 'pink';
+                }
+            </script>
+</body>
+
+</html>
