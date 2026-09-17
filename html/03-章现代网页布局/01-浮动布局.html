@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>浮动布局 完整学习指南</title>
+    <style>
+        /* ==================== 全局重置 ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', 'PingFang SC', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 40px 20px;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 50px;
+            color: #2c3e50;
+            font-size: 36px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 24px;
+        }
+
+        h3 {
+            margin: 15px 0 10px;
+            color: #34495e;
+            font-size: 18px;
+        }
+
+        /* ==================== 通用演示容器 ==================== */
+        .demo-section {
+            max-width: 1000px;
+            margin: 0 auto 50px;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .demo-box {
+            background-color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 2px dashed #bdc3c7;
+        }
+
+        .description {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #eaf4f4;
+            border-left: 4px solid #1abc9c;
+            border-radius: 0 8px 8px 0;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .code-example {
+            background-color: #2d3436;
+            color: #dfe6e9;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 13px;
+            margin-top: 15px;
+            overflow-x: auto;
+            line-height: 1.6;
+        }
+
+        .code-example .kw {
+            color: #fd79a8;
+        }
+
+        .code-example .val {
+            color: #00cec9;
+        }
+
+        .code-example .cm {
+            color: #636e72;
+            font-style: italic;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 10px;
+            background-color: #3498db;
+            color: #fff;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-right: 5px;
+        }
+
+        /* ==================== 第一步：float 基本属性 ==================== */
+        /* 父容器 - 给它加背景方便观察 */
+        .float-container-v1 {
+            background-color: #f9ca24;
+            border: 2px solid #f0932b;
+            padding: 10px;
+            margin: 15px 0;
+        }
+
+        /* 未浮动的块级元素 - 默认一个占一行 */
+        .box-v1 {
+            width: 120px;
+            height: 80px;
+            margin: 5px;
+            padding: 10px;
+            color: #fff;
+            font-weight: bold;
+            text-align: center;
+            border-radius: 6px;
+            line-height: 60px;
+        }
+
+        .box-a {
+            background-color: #e74c3c;
+        }
+
+        .box-b {
+            background-color: #3498db;
+        }
+
+        .box-c {
+            background-color: #2ecc71;
+        }
+
+        /* 浮动后的效果 */
+        .float-left {
+            float: left;
+        }
+
+        .float-right {
+            float: right;
+        }
+
+        .float-none {
+            float: none;
+            /* 默认值，不浮动 */
+        }
+
+        /* ==================== 第二步：浮动元素的特性 ==================== */
+        .feature-box {
+            padding: 15px;
+            margin: 10px 5px;
+            border-radius: 6px;
+            color: #fff;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* 特性1：块级元素浮动后可以设置宽度 */
+        .block-float-test {
+            width: 100%;
+            /* 默认块级元素宽度100% */
+            background-color: #9b59b6;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            margin: 5px 0;
+        }
+
+        .block-float-test.floated {
+            float: left;
+            width: 150px;
+            /* 浮动后宽度可以由内容或设定值决定 */
+        }
+
+        .block-float-clear {
+            clear: both;
+        }
+
+        /* 特性2：行内元素浮动后变成块级 */
+        .inline-float-test {
+            background-color: #f39c12;
+            color: #fff;
+            padding: 5px;
+            margin: 5px;
+        }
+
+        .inline-float-test.floated {
+            float: left;
+            width: 100px;
+            height: 50px;
+            line-height: 50px;
+            text-align: center;
+            background-color: #e67e22;
+        }
+
+        /* ==================== 第三步：高度塌陷问题 ==================== */
+        /* 塌陷的父容器 - 子元素全部浮动后，父容器高度为0 */
+        .collapse-parent {
+            background-color: #ffeaa7;
+            border: 2px solid #fdcb6e;
+            padding: 10px;
+            /* 注意：没有设置高度 */
+        }
+
+        .collapse-child {
+            float: left;
+            width: 100px;
+            height: 60px;
+            margin: 5px;
+            background-color: #e17055;
+            color: #fff;
+            text-align: center;
+            line-height: 60px;
+            border-radius: 4px;
+        }
+
+        /* ==================== 第四步：清除浮动 ==================== */
+        /* 方法1：额外标签法 (clear: both) */
+        .clearfix-add-tag::after {
+            content: "";
+            display: block;
+            clear: both;
+        }
+
+        /* 方法2：overflow: hidden (触发BFC) */
+        .clearfix-overflow {
+            overflow: hidden;
+        }
+
+        /* 方法3：万能清除法（双伪元素） */
+        .clearfix::before,
+        .clearfix::after {
+            content: "";
+            display: block;
+        }
+
+        .clearfix::after {
+            clear: both;
+        }
+
+        .clearfix {
+            *zoom: 1;
+            /* 兼容IE6/7 */
+        }
+
+        /* 清除浮动演示的父容器 */
+        .clear-parent {
+            background-color: #a29bfe;
+            border: 2px solid #6c5ce7;
+            padding: 10px;
+            color: #fff;
+        }
+
+        .clear-child {
+            float: left;
+            width: 80px;
+            height: 50px;
+            margin: 5px;
+            background-color: #00b894;
+            text-align: center;
+            line-height: 50px;
+            border-radius: 4px;
+        }
+
+        /* ==================== 第五步：浮动的实际应用 ==================== */
+
+        /* 应用1：图文环绕 */
+        .article-wrap {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #fff;
+        }
+
+        .article-wrap img {
+            float: left;
+            /* 图片左浮动，文字环绕右侧 */
+            margin: 0 15px 10px 0;
+            border-radius: 6px;
+            width: 150px;
+            height: 120px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .article-wrap h4 {
+            margin-bottom: 10px;
+            color: #2d3436;
+        }
+
+        .article-wrap p {
+            text-indent: 2em;
+            margin-bottom: 10px;
+            color: #636e72;
+            font-size: 14px;
+        }
+
+        .article-wrap .no-wrap {
+            clear: both;
+            /* 这个段落不被环绕 */
+            padding-top: 10px;
+            border-top: 1px dashed #ddd;
+        }
+
+        /* 应用2：导航栏 */
+        .nav-bar {
+            background-color: #2c3e50;
+            border-radius: 8px;
+            overflow: hidden;
+            /* 方式一：触发BFC清除浮动 */
+        }
+
+        .nav-bar .logo {
+            float: left;
+            color: #fff;
+            padding: 15px 25px;
+            font-weight: bold;
+            font-size: 20px;
+            background-color: #34495e;
+        }
+
+        .nav-bar ul {
+            float: right;
+            /* 整个导航列表向右浮动 */
+            list-style: none;
+        }
+
+        .nav-bar ul li {
+            float: left;
+            /* 每个 li 左浮动，横向排列 */
+        }
+
+        .nav-bar ul li a {
+            display: block;
+            color: #fff;
+            text-decoration: none;
+            padding: 15px 20px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-bar ul li a:hover {
+            background-color: #3498db;
+        }
+
+        /* 应用3：多列布局 - 产品卡片 */
+        .product-layout::after {
+            content: "";
+            display: block;
+            clear: both;
+        }
+
+        .product-card {
+            float: left;
+            width: calc(25% - 15px);
+            /* 4列布局，减去间距 */
+            margin-right: 15px;
+            margin-bottom: 15px;
+            background-color: #fff;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        /* 清除第4个卡片后面的浮动，让新行正常排列 */
+        .product-card:nth-child(4n) {
+            margin-right: 0;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-card .product-img {
+            height: 120px;
+            background: linear-gradient(135deg, #74b9ff, #a29bfe);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .product-card .product-info {
+            padding: 12px;
+        }
+
+        .product-card .product-name {
+            font-size: 14px;
+            color: #2d3436;
+            margin-bottom: 6px;
+        }
+
+        .product-card .product-price {
+            color: #e74c3c;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        /* 应用4：经典两列布局（左边固定 + 右边自适应） */
+        .two-col-layout {
+            background-color: #dfe6e9;
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .two-col-layout::after {
+            content: "";
+            display: block;
+            clear: both;
+        }
+
+        .two-col-layout .sidebar {
+            float: left;
+            width: 200px;
+            height: 250px;
+            background-color: #6c5ce7;
+            color: #fff;
+            text-align: center;
+            line-height: 250px;
+            border-radius: 6px;
+        }
+
+        .two-col-layout .main-content {
+            margin-left: 210px;
+            /* 给左栏留出空间（200px + 10px间距） */
+            height: 250px;
+            background-color: #00b894;
+            color: #fff;
+            text-align: center;
+            line-height: 250px;
+            border-radius: 6px;
+        }
+
+        /* 应用5：圣杯布局的简化版（左中右三列） */
+        .holy-grail {
+            background-color: #f1f2f6;
+            border-radius: 8px;
+        }
+
+        .holy-grail::after {
+            content: "";
+            display: block;
+            clear: both;
+        }
+
+        .holy-grail .left-col {
+            float: left;
+            width: 150px;
+            height: 150px;
+            background-color: #ff7675;
+            color: #fff;
+            text-align: center;
+            line-height: 150px;
+        }
+
+        .holy-grail .right-col {
+            float: right;
+            width: 150px;
+            height: 150px;
+            background-color: #74b9ff;
+            color: #fff;
+            text-align: center;
+            line-height: 150px;
+        }
+
+        .holy-grail .center-col {
+            /* 中间列不浮动，利用左右列的空间自然排列 */
+            margin-left: 160px;
+            margin-right: 160px;
+            height: 150px;
+            background-color: #55efc4;
+            text-align: center;
+            line-height: 150px;
+            color: #2d3436;
+            font-weight: bold;
+        }
+
+        /* ==================== 总结卡片 ==================== */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .summary-card {
+            padding: 20px;
+            border-radius: 8px;
+            color: #fff;
+        }
+
+        .summary-card h4 {
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .summary-card ul {
+            list-style: none;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .summary-card ul li::before {
+            content: "✓ ";
+            font-weight: bold;
+        }
+
+        .card-float {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .card-collapse {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+
+        .card-clear {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+        }
+
+        .card-app {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+            color: #2d3436;
+        }
+
+        /* 高亮提示 */
+        .highlight {
+            background-color: #fff3cd;
+            padding: 10px 15px;
+            border-radius: 6px;
+            border-left: 4px solid #ffc107;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🌊 浮动布局（Float）完整学习指南</h1>
+
+    <!-- ============================================================ -->
+    <!-- 第一步：认识 float - 基本属性 -->
+    <!-- ============================================================ -->
+    <div class="demo-section">
+        <h2>🚢 第一步：认识 float - 基本属性</h2>
+        <p>CSS 的 <code>float</code> 属性可以让元素"浮动"到父容器的左侧或右侧。它最初是为了实现<b>图文环绕</b>效果而设计的。</p>
+
+        <div class="code-example">
+            <span class="cm">/* float 的三个常用值 */</span>
+            <span class="kw">float</span>: <span class="val">none</span>; <span class="cm">/* 默认值，不浮动 */</span>
+            <span class="kw">float</span>: <span class="val">left</span>; <span class="cm">/* 向左浮动 */</span>
+            <span class="kw">float</span>: <span class="val">right</span>; <span class="cm">/* 向右浮动 */</span>
+        </div>
+
+        <h3>① 未浮动的块级元素（默认行为）</h3>
+        <div class="float-container-v1">
+            <div class="box-v1 box-a">红 A</div>
+            <div class="box-v1 box-b">蓝 B</div>
+            <div class="box-v1 box-c">绿 C</div>
+            <p>💡 块级元素默认独占一行，从上到下依次排列。注意父容器有黄色背景，高度由子元素撑开。</p>
+        </div>
+
+        <h3>② 全部向左浮动（float: left）</h3>
+        <div class="float-container-v1">
+            <div class="box-v1 box-a float-left">红 A</div>
+            <div class="box-v1 box-b float-left">蓝 B</div>
+            <div class="box-v1 box-c float-left">绿 C</div>
+            <p style="clear: both; padding-top: 10px;">💡 元素脱离文档流，向左依次排列在同一行。如果一行放不下，会自动换行。<br>⚠️
+                注意看父容器的黄色背景——它<b>高度塌陷了</b>！（因为子元素全部脱离文档流了）</p>
+        </div>
+
+        <h3>③ 全部向右浮动（float: right）</h3>
+        <div class="float-container-v1">
+            <div class="box-v1 box-a float-right">红 A</div>
+            <div class="box-v1 box-b float-right">蓝 B</div>
+            <div class="box-v1 box-c float-right">绿 C</div>
+            <p style="clear: both; padding-top: 10px;">💡 元素从右往左排列，顺序颠倒了（A 先浮动所以在最右）。</p>
+        </div>
+
+        <h3>④ 混合浮动（A 左，B 右，C 左）</h3>
+        <div class="float-container-v1">
+            <div class="box-v1 box-a float-left">红 A</div>
+            <div class="box-v1 box-b float-right">蓝 B</div>
+            <div class="box-v1 box-c float-left">绿 C</div>
+            <p style="clear: both; padding-top: 10px;">💡 A 靠左，B 靠右，C 紧跟在 A 后面靠左。可以用这种方式做导航栏（Logo 左、菜单右）。</p>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 第二步：浮动元素的核心特性 -->
+    <!-- ============================================================ -->
+    <div class="demo-section">
+        <h2>⚡ 第二步：浮动元素的核心特性</h2>
+
+        <div class="highlight">
+            <b>总结口诀：</b>浮动元素 = <b>脱离文档流</b> + <b>变成行内块</b>（可以设置宽高，又能横向排列）
+        </div>
+
+        <h3>特性 1：块级元素浮动后，可以设置宽度了</h3>
+        <p>普通块级元素宽度默认 100%，但浮动后宽度可以由内容决定或手动设置。</p>
+
+        <div class="demo-box">
+            <div class="block-float-test">我是普通块级 div（宽度 100%）</div>
+            <div class="block-float-test floated">我是浮动后的 div（宽度 150px）</div>
+            <div class="block-float-test floated">我也是浮动的（宽度 150px）</div>
+            <div class="block-float-clear"></div>
+            <p style="clear: both; margin-top: 10px;">💡 浮动后 div 不再独占一行，可以设置宽度，多个浮动 div 可以排在同一行。</p>
+        </div>
+
+        <h3>特性 2：行内元素浮动后，变成块级了</h3>
+        <p>普通行内元素（如 span）不能设置宽高，但浮动后可以了。</p>
+
+        <div class="demo-box">
+            <span class="inline-float-test">普通 span（不能设宽高）</span>
+            <span class="inline-float-test floated">浮动 span（宽100px 高50px）</span>
+            <span class="inline-float-test floated">浮动 span 2</span>
+            <div style="clear: both;"></div>
+            <p style="margin-top: 10px;">💡 浮动让行内元素"升级"为类似行内块的表现，可以设置 width/height/margin/padding。</p>
+        </div>
+
+        <h3>特性 3：浮动元素脱离文档流（重点！）</h3>
+        <p>脱离文档流意味着：浮动元素不再占据原来的空间，后面的元素会"顶上来"填补空缺。</p>
+
+        <div class="demo-box">
+            <div
+                style="float: left; width: 120px; height: 80px; background-color: #e74c3c; color: #fff; text-align: center; line-height: 80px; border-radius: 4px;">
+                浮动元素</div>
+            <div
+                style="height: 80px; background-color: #3498db; color: #fff; text-align: center; line-height: 80px; border-radius: 4px;">
+                我是下面的元素，我顶上来了！</div>
+            <div style="clear: both;"></div>
+            <p style="margin-top: 10px;">💡 红色 div 浮动后脱离文档流，蓝色 div 就像红色 div 不存在一样，直接顶到了上面。<br>
+                这就是为什么浮动容易造成布局混乱——<b>脱离文档流 = 元素"飞起来"了</b>。</p>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 第三步：浮动的副作用 - 高度塌陷 -->
+    <!-- ============================================================ -->
+    <div class="demo-section">
+        <h2>🕳️ 第三步：浮动的副作用 - 高度塌陷</h2>
+
+        <p>当父容器内的所有子元素都浮动后，父容器的高度会<b>变成 0</b>！这叫做<b>高度塌陷</b>。</p>
+
+        <div class="code-example">
+            <span class="cm">/* 塌陷的原因：
+                子元素全部 float 后 → 全部脱离文档流 → 父容器内"空无一物" → 高度为 0 */</span>
+        </div>
+
+        <h3>塌陷示例（⚠️ 父容器背景几乎看不见）</h3>
+        <div class="collapse-parent">
+            <div class="collapse-child">子1</div>
+            <div class="collapse-child">子2</div>
+            <div class="collapse-child">子3</div>
+        </div>
+        <p>⬆️ 这个黄色父容器本来应该包裹住三个橙色子元素，但因为子元素全浮动了，父容器高度塌陷为 0，黄色背景几乎看不见！</p>
+
+        <h3>如果给父容器一个边框，塌陷更明显</h3>
+        <div style="border: 3px solid #e17055; padding: 10px;">
+            <div
+                style="float: left; width: 80px; height: 50px; margin: 5px; background-color: #fab1a0; text-align: center; line-height: 50px;">
+                子A</div>
+            <div
+                style="float: left; width: 80px; height: 50px; margin: 5px; background-color: #fab1a0; text-align: center; line-height: 50px;">
+                子B</div>
+            <div
+                style="float: left; width: 80px; height: 50px; margin: 5px; background-color: #fab1a0; text-align: center; line-height: 50px;">
+                子C</div>
+        </div>
+        <p>⬆️ 看这个红色边框，它紧紧贴在一起，没有包住浮动的子元素——这就是高度塌陷的铁证！</p>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 第四步：清除浮动的三种方法 -->
+    <!-- ============================================================ -->
+    <div class="demo-section">
+        <h2>🧹 第四步：清除浮动的三种常用方法</h2>
+
+        <div class="highlight">
+            <b>核心原理：</b>让父容器<b>形成 BFC（块级格式化上下文）</b>，或者在浮动元素后面添加一个"清道夫"。
+        </div>
+
+        <h3>方法 ①：额外标签法（给浮动子元素后面加一个空 div）</h3>
+        <p>在所有浮动元素的最后面，添加一个设置了 <code>clear: both</code> 的空元素。</p>
+
+        <div class="clear-parent">
+            <div class="clear-child">子1</div>
+            <div class="clear-child">子2</div>
+            <div class="clear-child">子3</div>
+            <!-- 清除浮动的空标签 -->
+            <div style="clear: both;"></div>
+        </div>
+
+        <div class="code-example">
+            <span class="cm">/* HTML 中手动加一个空 div */</span>
+            <span class="kw"><span style="color:#fd79a8;">
+                    << /span>div<span style="color:#fd79a8;">></span>
+                </span><span class="kw" style="color:#fd79a8;">
+                    << /span>/div<span style="color:#fd79a8;">></span>
+                </span>
+
+                <span class="cm">/* CSS */</span>
+                div {
+                <span class="kw">clear</span>: <span class="val">both</span>;
+                }
+        </div>
+
+        <p><b>优点：</b>简单易懂，浏览器兼容性好<br>
+            <b>缺点：</b>需要添加无意义的空标签，不够优雅
+        </p>
+
+        <h3>方法 ②：overflow: hidden（触发父元素 BFC）⭐ 推荐简单场景</h3>
+        <p>给父容器添加 <code>overflow: hidden</code>（或 <code>auto</code> / <code>scroll</code>），触发 BFC 让父容器包裹住浮动子元素。</p>
+
+        <div class="clear-parent clearfix-overflow">
+            <div class="clear-child">子1</div>
+            <div class="clear-child">子2</div>
+            <div class="clear-child">子3</div>
+        </div>
+
+        <div class="code-example">
+            <span class="cm">/* 只需要给父容器加一行 CSS */</span>
+            .parent {
+            <span class="kw">overflow</span>: <span class="val">hidden</span>;
+            }
+
+            <span class="cm">/* 原理：触发 BFC（块级格式化上下文）
+                BFC 的特性之一就是：会包含浮动的子元素 */</span>
+        </div>
+
+        <p><b>优点：</b>写法简洁，不需要额外标签<br>
+            <b>缺点：</b>overflow 可能导致超出内容被裁剪（比如做下拉菜单时）
+        </p>
+
+        <h3>方法 ③：万能清除法（双伪元素法）⭐⭐ 推荐通用场景</h3>
+        <p>使用 <code>::after</code> 伪元素模拟"额外标签法"，不污染 HTML 结构。</p>
+
+        <div class="clear-parent clearfix">
+            <div class="clear-child">子1</div>
+            <div class="clear-child">子2</div>
+            <div class="clear-child">子3</div>
+        </div>
+
+        <div class="code-example">
+            <span class="cm">/* 万能清除浮动类 - 复制粘贴即可使用 */</span>
+            <span class="kw">.clearfix</span>::<span class="kw">before</span>,
+            <span class="kw">.clearfix</span>::<span class="kw">after</span> {
+            <span class="kw">content</span>: <span class="val">""</span>;
+            <span class="kw">display</span>: <span class="val">block</span>;
+            }
+
+            <span class="kw">.clearfix</span>::<span class="kw">after</span> {
+            <span class="kw">clear</span>: <span class="val">both</span>;
+            }
+
+            <span class="cm">/* 使用方式：给需要清除浮动的父容器加 class="clearfix" */</span>
+        </div>
+
+        <p><b>优点：</b>不污染 HTML，可复用，业界最常用的方案<br>
+            <b>缺点：</b>写法稍长，但可以复制一份到处用
+        </p>
+
+        <div class="highlight">
+            <b>🎯 我的建议：</b>在你的 CSS 文件顶部定义一个 <code>.clearfix</code> 类，以后所有需要清除浮动的地方，给父容器加个 class 就行了！
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 第五步：浮动的实际应用场景 -->
+    <!-- ============================================================ -->
+    <div class="demo-section">
+        <h2>🎨 第五步：浮动的实际应用场景</h2>
+
+        <h3>应用 ①：图文环绕（float 最初的设计目的）</h3>
+        <div class="article-wrap">
+            <img src="#" alt="文章图片">
+            <h4>浮动布局学习之旅</h4>
+            <p>这是一段示例文字，图片使用了 float: left，所以文字会自动环绕在图片的右侧和下方。这就是 float 属性最初被发明出来的原因——实现图文混排的报纸/杂志效果。</p>
+            <p>在实际开发中，这种效果常见于新闻列表、博客文章、产品介绍等场景。你可以通过调整 float 的方向来控制图片在左侧还是右侧。</p>
+            <p class="no-wrap">💡 这个段落使用了 clear: both，所以它不会被图片环绕，而是老老实实排在图片下方。</p>
+        </div>
+
+        <h3>应用 ②：顶部导航栏（Logo 左浮 + 菜单右浮）</h3>
+        <div class="nav-bar">
+            <div class="logo">🚀 MyWebsite</div>
+            <ul>
+                <li><a href="#">首页</a></li>
+                <li><a href="#">产品</a></li>
+                <li><a href="#">服务</a></li>
+                <li><a href="#">关于</a></li>
+                <li><a href="#">联系</a></li>
+            </ul>
+        </div>
+        <div class="code-example">
+            <span class="cm">/* 关键思路：
+                Logo 左浮动 → 菜单 ul 右浮动 → 菜单里每个 li 再左浮动 */</span>
+
+            <span class="kw">.logo</span> { <span class="kw">float</span>: <span class="val">left</span>; }
+            <span class="kw">nav ul</span> { <span class="kw">float</span>: <span class="val">right</span>; }
+            <span class="kw">nav ul li</span> { <span class="kw">float</span>: <span class="val">left</span>; }
+
+            <span class="cm">/* 清除浮动：给 nav 加 overflow: hidden 或 clearfix */</span>
+        </div>
+
+        <h3>应用 ③：多列产品卡片布局</h3>
+        <div class="product-layout">
+            <div class="product-card">
+                <div class="product-img">📱 iPhone</div>
+                <div class="product-info">
+                    <div class="product-name">智能手机 Pro Max</div>
+                    <div class="product-price">¥9999</div>
+                </div>
+            </div>
+            <div class="product-card">
+                <div class="product-img">💻 Laptop</div>
+                <div class="product-info">
+                    <div class="product-name">笔记本电脑 Air</div>
+                    <div class="product-price">¥7999</div>
+                </div>
+            </div>
+            <div class="product-card">
+                <div class="product-img">🎧 AirPods</div>
+                <div class="product-info">
+                    <div class="product-name">无线蓝牙耳机</div>
+                    <div class="product-price">¥1299</div>
+                </div>
+            </div>
+            <div class="product-card">
+                <div class="product-img">⌚ Watch</div>
+                <div class="product-info">
+                    <div class="product-name">智能手表 Series</div>
+                    <div class="product-price">¥2999</div>
+                </div>
+            </div>
+            <div class="product-card">
+                <div class="product-img">🖥️ Monitor</div>
+                <div class="product-info">
+                    <div class="product-name">4K 显示器 27寸</div>
+                    <div class="product-price">¥3499</div>
+                </div>
+            </div>
+            <div class="product-card">
+                <div class="product-img">⌨️ Keyboard</div>
+                <div class="product-info">
+                    <div class="product-name">机械键盘 RGB</div>
+                    <div class="product-price">¥699</div>
+                </div>
+            </div>
+            <div class="product-card">
+                <div class="product-img">🖱️ Mouse</div>
+                <div class="product-info">
+                    <div class="product-name">游戏鼠标 电竞版</div>
+                    <div class="product-price">¥399</div>
+                </div>
+            </div>
+            <div class="product-card">
+                <div class="product-img">📷 Camera</div>
+                <div class="product-info">
+                    <div class="product-name">微单相机套装</div>
+                    <div class="product-price">¥5999</div>
+                </div>
+            </div>
+        </div>
+        <div class="code-example">
+            <span class="cm">/* 关键：每个卡片左浮动 + 宽度百分比 */</span>
+            <span class="kw">.product-card</span> {
+            <span class="kw">float</span>: <span class="val">left</span>;
+            <span class="kw">width</span>: <span class="val">calc(25% - 15px)</span>; <span class="cm">/* 4列，减去间距
+                */</span>
+            <span class="kw">margin-right</span>: <span class="val">15px</span>;
+            }
+
+            <span class="cm">/* 第 4、8、12... 个清除右边距 */</span>
+            <span class="kw">.product-card</span>:<span class="kw">nth-child</span>(<span class="val">4n</span>) {
+            <span class="kw">margin-right</span>: <span class="val">0</span>;
+            }
+
+            <span class="cm">/* 父容器记得清除浮动！ */</span>
+        </div>
+
+        <h3>应用 ④：两列布局（左固定 + 右自适应）</h3>
+        <div class="two-col-layout">
+            <div class="sidebar">侧边栏<br>宽 200px 固定</div>
+            <div class="main-content">主内容区<br>自适应宽度（margin-left 留出空间）</div>
+        </div>
+        <div class="code-example">
+            <span class="cm">/* 左栏浮动 + 固定宽度 */</span>
+            <span class="kw">.sidebar</span> {
+            <span class="kw">float</span>: <span class="val">left</span>;
+            <span class="kw">width</span>: <span class="val">200px</span>;
+            }
+
+            <span class="cm">/* 右栏不浮动，用 margin-left 避开左栏 */</span>
+            <span class="kw">.main-content</span> {
+            <span class="kw">margin-left</span>: <span class="val">210px</span>; <span class="cm">/* 200px + 10px 间距
+                */</span>
+            }
+        </div>
+
+        <h3>应用 ⑤：简化版圣杯布局（左中右三列）</h3>
+        <div class="holy-grail">
+            <div class="left-col">左栏<br>宽 150px</div>
+            <div class="right-col">右栏<br>宽 150px</div>
+            <div class="center-col">中间主内容区<br>自适应宽度</div>
+        </div>
+        <div class="code-example">
+            <span class="cm">/* 左栏左浮动，右栏右浮动，中间不浮动 */</span>
+            <span class="kw">.left-col</span> { <span class="kw">float</span>: <span class="val">left</span>; <span
+                class="kw">width</span>: <span class="val">150px</span>; }
+            <span class="kw">.right-col</span> { <span class="kw">float</span>: <span class="val">right</span>; <span
+                class="kw">width</span>: <span class="val">150px</span>; }
+
+            <span class="cm">/* 中间列用 margin 左右各留出 160px */</span>
+            <span class="kw">.center-col</span> {
+            <span class="kw">margin-left</span>: <span class="val">160px</span>;
+            <span class="kw">margin-right</span>: <span class="val">160px</span>;
+            }
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 总结卡片 -->
+    <!-- ============================================================ -->
+    <div class="demo-section">
+        <h2>📋 浮动布局核心知识总结</h2>
+
+        <div class="summary-grid">
+            <div class="summary-card card-float">
+                <h4>float 是什么？</h4>
+                <ul>
+                    <li>让元素脱离文档流</li>
+                    <li>可以设置 left 或 right</li>
+                    <li>最初用于图文环绕</li>
+                    <li>现在多用于简单布局</li>
+                </ul>
+            </div>
+
+            <div class="summary-card card-collapse">
+                <h4>什么是高度塌陷？</h4>
+                <ul>
+                    <li>子元素全部浮动</li>
+                    <li>父容器高度变为 0</li>
+                    <li>背景和边框看不到</li>
+                    <li>布局会一团糟</li>
+                </ul>
+            </div>
+
+            <div class="summary-card card-clear">
+                <h4>清除浮动的方法</h4>
+                <ul>
+                    <li>额外标签法（简单但丑）</li>
+                    <li>overflow: hidden（简洁）</li>
+                    <li>双伪元素 ::after（推荐）</li>
+                    <li>记住 .clearfix 类！</li>
+                </ul>
+            </div>
+
+            <div class="summary-card card-app">
+                <h4>浮动的应用场景</h4>
+                <ul>
+                    <li>图文环绕效果</li>
+                    <li>导航栏 Logo + 菜单</li>
+                    <li>多列卡片布局</li>
+                    <li>左右/三列布局</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="highlight" style="margin-top: 25px;">
+            <b>💡 现代开发提醒：</b>浮动布局在现代 CSS 中已经被 <b>Flexbox</b> 和 <b>Grid</b> 布局大量替代。但 float 仍然是必须掌握的知识：
+            <br>① 它是 CSS 布局的基础，理解它才能理解文档流
+            <br>② 图文环绕效果目前仍需用 float 实现
+            <br>③ 很多老项目还在用浮动布局，维护时需要看懂
+        </div>
+    </div>
+
+</body>
+
+</html>

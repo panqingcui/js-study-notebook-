@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网格布局</title>
+    <style>
+        /* 网格布局 3列*/
+        .grid {
+            display: grid;
+            /* 3列网格 */
+            /* grid-template-columns: repeat(3, 1fr); */
+            /* 自动填充列 */
+            /* minmax(200px, 1fr) 表示列的最小宽度为200px，最大宽度为1fr */
+            /* grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); */
+            grid-template-rows: repeat(3, 1fr);
+            /* 自动行高度 */
+            /* grid-auto-rows: 80px; */
+            /* 排列方向 */
+            grid-auto-flow: column;
+            grid-gap: 10px;
+            width: 800px;
+        }
+
+        .grid-box {
+            border-radius: 8px;
+            color: #000;
+            font-weight: 600;
+            font-size: 1em;
+            display: grid;
+            place-items: center;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+            border: 1px solid #000;
+        }
+
+        /* 合并第1行和第2行 */
+        .grid-box:nth-child(1) {
+            grid-column: span 2;
+            grid-row: span 2;
+        }
+
+        .grid-box {
+            background-color: #fff
+        }
+
+        .grid-box:nth-child(1) {
+            background-color: #007bff;
+        }
+
+        .grid-box:nth-child(2) {
+            background-color: #28a745;
+        }
+
+        .grid-box:nth-child(3) {
+            background-color: #06b6d4;
+        }
+
+        .grid-box:nth-child(4) {
+            background-color: #ef4444;
+        }
+
+        .grid-box:nth-child(5) {
+            background-color: #8b5cf6;
+        }
+
+        .grid-box:nth-child(6) {
+            background-color: #10b981;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 网格布局 -->
+    <div class="grid">
+        <div class="grid-box">1</div>
+        <div class="grid-box">2</div>
+        <div class="grid-box">3</div>
+        <div class="grid-box">4</div>
+        <div class="grid-box">5</div>
+        <div class="grid-box">6</div>
+        <div class="grid-box">7</div>
+        <div class="grid-box">8</div>
+        <div class="grid-box">9</div>
+        <div class="grid-box">10</div>
+        <div class="grid-box">11</div>
+        <div class="grid-box">12</div>
+    </div>
+    <script>
+        // 点击每个网格项，改变其背景颜色
+        document.querySelectorAll('.grid-box').forEach(box => {
+            box.addEventListener('click', function () {
+                this.style.backgroundColor = 'red';
+            });
+        });
+    </script>
+</body>
+
+</html>

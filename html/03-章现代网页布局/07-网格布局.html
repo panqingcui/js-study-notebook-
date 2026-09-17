@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Grid 网格布局 · 交互式学习</title>
+    <style>
+        /* ========== 基础重置 ========== */
+        /* 清除默认内外边距，统一盒模型计算方式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* ========== 页面整体 ========== */
+        /* 使用渐变背景，设置默认字体和内边距 */
+        body {
+            font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
+            color: #333;
+        }
+
+        /* ========== 页头 ========== */
+        .page-header {
+            text-align: center;
+            color: #fff;
+            margin-bottom: 40px;
+        }
+
+        .page-header h1 {
+            font-size: 2.4em;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
+            margin-bottom: 10px;
+        }
+
+        .page-header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        /* ========== 卡片容器（自身也使用 Grid 布局） ========== */
+        /* repeat(auto-fit, minmax(520px, 1fr)) 实现响应式卡片布局：
+           - 窗口宽度足够时，卡片并排显示
+           - 窗口变窄时，卡片自动换行单列显示
+           这就是 CSS Grid 响应式的黄金写法 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(520px, 1fr));
+            gap: 25px;
+        }
+
+        /* ========== 通用卡片样式 ========== */
+        .card {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        /* 鼠标悬浮时卡片上浮效果 */
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 14px 36px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 卡片标题栏 */
+        .card-title {
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            color: #fff;
+            padding: 16px 22px;
+            font-size: 1.15em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* 标题前的圆形编号 */
+        .card-title .num {
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85em;
+        }
+
+        /* 卡片内容区 */
+        .card-body {
+            padding: 20px 22px 22px;
+        }
+
+        /* 知识点说明文字 */
+        .explanation {
+            font-size: 0.92em;
+            color: #555;
+            margin-bottom: 14px;
+            line-height: 1.65;
+        }
+
+        /* 说明文字中的行内代码标签 */
+        .explanation code {
+            background: #eef2ff;
+            color: #4338ca;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        /* ========== 演示区域 ========== */
+        /* 每个知识点的可视化演示容器，虚线边框方便识别 */
+        .demo-area {
+            border: 2px dashed #c7d2fe;
+            border-radius: 10px;
+            padding: 15px;
+            background: #fafbff;
+            min-height: 180px;
+            position: relative;
+        }
+
+        /* 演示区域中的网格子项（彩色方块） */
+        .grid-box {
+            border-radius: 8px;
+            color: #fff;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1em;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        /* ========== 控制面板 ========== */
+        /* 按钮组容器，flex 布局自动换行 */
+        .controls {
+            margin-top: 14px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        /* 切换按钮 */
+        .controls button {
+            padding: 7px 14px;
+            border: none;
+            background: #e0e7ff;
+            color: #3730a3;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.2s;
+        }
+
+        .controls button:hover {
+            background: #c7d2fe;
+        }
+
+        /* 当前选中的按钮高亮样式 */
+        .controls button.active {
+            background: #4f46e5;
+            color: #fff;
+        }
+
+        /* ========== 实时 CSS 代码输出框 ========== */
+        /* 深色代码主题，模拟编辑器效果 */
+        .css-output {
+            margin-top: 12px;
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 12px 14px;
+            border-radius: 8px;
+            font-family: "Consolas", "Monaco", monospace;
+            font-size: 0.82em;
+            line-height: 1.7;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        /* CSS 属性名（蓝色） */
+        .css-output .prop {
+            color: #93c5fd;
+        }
+
+        /* CSS 属性值（黄色） */
+        .css-output .val {
+            color: #fcd34d;
+        }
+
+        /* CSS 注释（灰色斜体） */
+        .css-output .cmt {
+            color: #64748b;
+            font-style: italic;
+        }
+
+        /* ========== 知识点提示框 ========== */
+        /* 黄色提示条，用于补充说明和易错点提醒 */
+        .tip {
+            margin-top: 10px;
+            padding: 10px 14px;
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            border-radius: 4px;
+            font-size: 0.88em;
+            color: #78350f;
+            line-height: 1.6;
+        }
+
+        /* 让总结卡片横跨整行（在两列布局中占满） */
+        .full-width {
+            grid-column: 1 / -1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ========== 页面头部标题 ========== -->
+    <div class="page-header">
+        <h1>🎨 CSS Grid 网格布局</h1>
+        <p>交互式学习 · 10 个核心知识点 · 边看边玩边学</p>
+    </div>
+
+    <!-- ========== 主内容容器（响应式 Grid 卡片流） ========== -->
+    <div class="container" id="container">
+
+        <!-- ========== 知识点 1：display:grid & fr 单位 ========== -->
+        <!-- 核心概念：fr 是 fraction（份数）单位，1fr 代表"拿一份"，2fr 代表"拿两份" -->
+        <div class="card">
+            <div class="card-title"><span class="num">1</span> 创建网格 & fr 单位</div>
+            <div class="card-body">
+                <p class="explanation">
+                    给父容器设置 <code>display: grid</code>，再用 <code>grid-template-columns</code> 划分列数。
+                    <code>fr</code>（fraction）是"份数"单位，会自动按比例分配剩余空间。
+                </p>
+                <div class="demo-area" id="demo1">
+                    <div class="grid-box" style="background:#ef4444">1fr</div>
+                    <div class="grid-box" style="background:#3b82f6">2fr</div>
+                    <div class="grid-box" style="background:#10b981">1fr</div>
+                </div>
+                <div class="css-output"><span class="prop">.grid</span> {
+                    <span class="prop">display</span>: <span class="val">grid</span>;
+                    <span class="prop">grid-template-columns</span>: <span class="val">1fr 2fr 1fr</span>;
+                    <span class="prop">gap</span>: <span class="val">10px</span>;
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== 知识点 2：gap 间距控制 ========== -->
+        <!-- gap: 同时设置行列间距；row-gap / column-gap: 分别设置 -->
+        <div class="card">
+            <div class="card-title"><span class="num">2</span> gap 间距控制</div>
+            <div class="card-body">
+                <p class="explanation">
+                    <code>gap</code> 是简写属性，同时设置行间距和列间距。也可以单独用
+                    <code>row-gap</code> 和 <code>column-gap</code>。
+                </p>
+                <div class="demo-area" id="demo2">
+                    <div class="grid-box" style="background:#8b5cf6">A</div>
+                    <div class="grid-box" style="background:#ec4899">B</div>
+                    <div class="grid-box" style="background:#f59e0b">C</div>
+                    <div class="grid-box" style="background:#06b6d4">D</div>
+                    <div class="grid-box" style="background:#84cc16">E</div>
+                    <div class="grid-box" style="background:#ef4444">F</div>
+                </div>
+                <div class="controls">
+                    <button onclick="setGap(0)" class="active">gap: 0</button>
+                    <button onclick="setGap(10)">gap: 10px</button>
+                    <button onclick="setGap(20)">gap: 20px</button>
+                    <button onclick="setGap(30)">gap: 30px</button>
+                </div>
+                <div class="css-output" id="css2"><span class="prop">.grid</span> { <span class="cmt">/* 默认 gap: 10px
+                        */</span> }</div>
+            </div>
+        </div>
+
+        <!-- ========== 知识点 3：repeat() 重复函数 ========== -->
+        <!-- repeat(n, value) 省去重复书写；还支持 repeat(2, 100px 1fr) 交替模式 -->
+        <div class="card">
+            <div class="card-title"><span class="num">3</span> repeat() 重复函数</div>
+            <div class="card-body">
+                <p class="explanation">
+                    <code>repeat(n, value)</code> 可以省去重复书写。
+                    <code>repeat(3, 1fr)</code> 等于写三遍 <code>1fr</code>。
+                    还可以写成 <code>repeat(2, 100px 1fr)</code> 这种交替模式。
+                </p>
+                <div class="demo-area" id="demo3">
+                    <div class="grid-box" style="background:#6366f1">1</div>
+                    <div class="grid-box" style="background:#a855f7">2</div>
+                    <div class="grid-box" style="background:#ec4899">3</div>
+                    <div class="grid-box" style="background:#14b8a6">4</div>
+                    <div class="grid-box" style="background:#f97316">5</div>
+                    <div class="grid-box" style="background:#22c55e">6</div>
+                </div>
+                <div class="controls">
+                    <button onclick="setRepeat(3)" class="active">repeat(3, 1fr)</button>
+                    <button onclick="setRepeat(4)">repeat(4, 1fr)</button>
+                    <button onclick="setRepeat(2)">repeat(2, 1fr)</button>
+                    <button onclick="setRepeatAlt()">repeat(2, 100px 1fr)</button>
+                </div>
+                <div class="css-output" id="css3"><span class="prop">.grid</span> { }</div>
+            </div>
+        </div>
+
+        <!-- ========== 知识点 4：grid-column / grid-row 网格线 & 跨格 ========== -->
+        <!-- 网格线编号从 1 开始，也可以用负数从末尾倒着数（-1 即最后一条线） -->
+        <div class="card">
+            <div class="card-title"><span class="num">4</span> 网格线 & 跨格</div>
+            <div class="card-body">
+                <p class="explanation">
+                    用 <code>grid-column: 起始线 / 结束线</code> 让某个元素横跨多列。
+                    <code>-1</code> 表示最后一条网格线，<code>span N</code> 表示"跨 N 格"。
+                </p>
+                <div class="demo-area" id="demo4">
+                    <div class="grid-box" style="background:#ef4444; grid-column: 1 / -1;">横跨整行 (1/-1)</div>
+                    <div class="grid-box" style="background:#3b82f6">2</div>
+                    <div class="grid-box" style="background:#10b981">3</div>
+                    <div class="grid-box" style="background:#f59e0b; grid-column: span 2;">跨 2 格 (span 2)</div>
+                    <div class="grid-box" style="background:#8b5cf6">5</div>
+                </div>
+                <div class="css-output"><span class="prop">.item-a</span> { <span class="prop">grid-column</span>: <span
+                        class="val">1 / -1</span>; }
+                    <span class="prop">.item-d</span> { <span class="prop">grid-column</span>: <span class="val">span
+                        2</span>; }
+                </div>
+                <div class="tip">💡 3 列网格有 4 条网格线：1 ─ 2 ─ 3 ─ 4（或反过来 -4 ─ -3 ─ -2 ─ -1）</div>
+            </div>
+        </div>
+
+        <!-- ========== 知识点 5：grid-template-areas 区域命名 ========== -->
+        <!-- 子元素用 grid-area: 名字 认领区域，. 表示空区域 -->
+        <div class="card">
+            <div class="card-title"><span class="num">5</span> 区域命名 template-areas</div>
+            <div class="card-body">
+                <p class="explanation">
+                    <code>grid-template-areas</code> 给每个区域起名字，子元素用
+                    <code>grid-area: 名字</code> 认领。布局语义化，写起来像画 ASCII 图。
+                </p>
+                <!-- 直接在 style 里写 grid-template-areas，布局一目了然 -->
+                <div class="demo-area" id="demo5" style="grid-template-areas:
+                    'header header'
+                    'sidebar main'
+                    'footer footer';
+                    grid-template-columns: 180px 1fr;
+                    grid-template-rows: 50px 1fr 50px;
+                    height: 260px;">
+                    <div class="grid-box" style="background:#ef4444; grid-area: header;">Header</div>
+                    <div class="grid-box" style="background:#3b82f6; grid-area: sidebar;">Sidebar</div>
+                    <div class="grid-box" style="background:#10b981; grid-area: main;">Main Content</div>
+                    <div class="grid-box" style="background:#8b5cf6; grid-area: footer;">Footer</div>
+                </div>
+                <div class="css-output"><span class="prop">.layout</span> {
+                    <span class="prop">grid-template-areas</span>:
+                    <span class="val">'header header'</span>
+                    <span class="val">'sidebar main'</span>
+                    <span class="val">'footer footer'</span>;
+                    }
+                </div>
+                <div class="tip">💡 用点 <code>.</code> 表示空区域，例如 <code>'sidebar . main'</code></div>
+            </div>
+        </div>
+
+        <!-- ========== 知识点 6：justify-items / align-items 单元格内对齐 ========== -->
+        /* items：控制所有子项在各自单元格内的对齐方式（父容器属性） */
+        <div class="card">
+            <div class="card-title"><span class="num">6</span> 单元格内对齐 (items)</div>
+            <div class="card-body">
+                <p class="explanation">
+                    <code>justify-items</code> 控制**水平方向**、<code>align-items</code> 控制**垂直方向**，
+                    作用在父容器上，让所有子元素在各自单元格内对齐。
+                </p>
+                <div class="demo-area" id="demo6">
+                    <!-- 固定宽高，方便看到对齐效果（stretch 时需要去掉固定宽高才能拉伸） -->
+                    <div class="grid-box" style="background:#ef4444; width:40px; height:40px;">1</div>
+                    <div class="grid-box" style="background:#3b82f6; width:40px; height:40px;">2</div>
+                    <div class="grid-box" style="background:#10b981; width:40px; height:40px;">3</div>
+                    <div class="grid-box" style="background:#f59e0b; width:40px; height:40px;">4</div>
+                </div>
+                <div class="controls">
+                    <button onclick="setAlign('stretch', 'stretch')" class="active">stretch</button>
+                    <button onclick="setAlign('start', 'start')">start</button>
+                    <button onclick="setAlign('center', 'center')">center</button>
+                    <button onclick="setAlign('end', 'end')">end</button>
+                </div>
+                <div class="css-output" id="css6"><span class="prop">.grid</span> { }</div>
+            </div>
+        </div>
+
+        <!-- ========== 知识点 7：justify-content / align-content 整个网格对齐 ========== -->
+        /* content：当网格总尺寸 < 容器尺寸时，控制整个网格在容器中的位置 */ <div class="card">
+            <div class="card-title"><span class="num">7</span> 整个网格对齐 (content)</div>
+            <div class="card-body">
+                <p class="explanation">
+                    当网格总尺寸小于容器时（例如固定 80px × 80px 的格子），
+                    <code>justify-content</code> 和 <code>align-content</code> 控制**整个网格**在容器中的位置。
+                </p>
+                <!-- 固定每个子项 60px，容器有 260px 高度，留出空间让 content 对齐生效 -->
+                <div class="demo-area" id="demo7" style="height: 260px;">
+                    <div class="grid-box" style="background:#ef4444; width:60px; height:60px;">1</div>
+                    <div class="grid-box" style="background:#3b82f6; width:60px; height:60px;">2</div>
+                    <div class="grid-box" style="background:#10b981; width:60px; height:60px;">3</div>
+                    <div class="grid-box" style="background:#f59e0b; width:60px; height:60px;">4</div>
+                </div>
+                <div class="controls">
+                    <button onclick="setContent('start')" class="active">start</button>
+                    <button onclick="setContent('center')">center</button>
+                    <button onclick="setContent('end')">end</button>
+                    <button onclick="setContent('space-between')">space-between</button>
+                    <button onclick="setContent('space-around')">space-around</button>
+                </div>
+                <div class="css-output" id="css7"><span class="prop">.grid</span> { }</div>
+            </div>
+    </div>
+
+    <!-- ========== 知识点 8：auto-fit / auto-fill 自适应列数 ========== -->
+    /* auto-fit：空列会被压扁合并到已有列中；auto-fill：空列会被保留为隐形轨道 */
+    <div class="card">
+        <div class="card-title"><span class="num">8</span> 自适应列数 auto-fit & auto-fill</div>
+        <div class="card-body">
+            <p class="explanation">
+                <code>repeat(auto-fit, minmax(最小, 1fr))</code> 让浏览器**自动计算**能放几列。
+                拖拽浏览器窗口试试宽度变化！<code>auto-fit</code> 会把空列"压扁"，<code>auto-fill</code> 会保留空列。
+            </p>
+            <div class="demo-area" id="demo8">
+                <div class="grid-box" style="background:#ef4444">1</div>
+                <div class="grid-box" style="background:#3b82f6">2</div>
+                <div class="grid-box" style="background:#10b981">3</div>
+                <div class="grid-box" style="background:#f59e0b">4</div>
+                <div class="grid-box" style="background:#8b5cf6">5</div>
+                <div class="grid-box" style="background:#ec4899">6</div>
+            </div>
+            <div class="controls">
+                <button onclick="setAuto('auto-fit', 140)" class="active">auto-fit / 140px</button>
+                <button onclick="setAuto('auto-fill', 140)">auto-fill / 140px</button>
+                <button onclick="setAuto('auto-fit', 200)">auto-fit / 200px</button>
+                <button onclick="setAuto('auto-fill', 200)">auto-fill / 200px</button>
+            </div>
+            <div class="css-output" id="css8"><span class="prop">.grid</span> { }</div>
+            <div class="tip">💡 响应式布局的黄金公式：<code>grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))</code>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== 知识点 9：minmax() 最小最大尺寸限制 ========== -->
+    /* minmax(min, max) 组合使用时：空间足够时按 max 分配，空间不足时收缩到 min */
+    <div class="card">
+        <div class="card-title"><span class="num">9</span> minmax() 限制范围</div>
+        <div class="card-body">
+            <p class="explanation">
+                <code>minmax(min, max)</code> 给轨道尺寸设下限和上限。
+                组合起来能做出"至少 150px，但最多平分剩余空间"的弹性布局。
+            </p>
+            <div class="demo-area" id="demo9">
+                <div class="grid-box" style="background:#ef4444">min 120</div>
+                <div class="grid-box" style="background:#3b82f6">min 120</div>
+                <div class="grid-box" style="background:#10b981">min 120</div>
+            </div>
+            <div class="controls">
+                <button onclick="setMinmax(80)">min 80px</button>
+                <button onclick="setMinmax(150)" class="active">min 150px</button>
+                <button onclick="setMinmax(220)">min 220px</button>
+            </div>
+            <div class="css-output" id="css9"><span class="prop">.grid</span> { }</div>
+        </div>
+    </div>
+
+    <!-- ========== 知识点 10：grid-auto-flow 自动放置 ========== -->
+    /* row：默认，先填满一行再换行；column：先填满一列再换列；
+    dense：让后面的小元素填补前面出现的空隙 */
+    <div class="card">
+        <div class="card-title"><span class="num">10</span> grid-auto-flow 排列方向</div>
+        <div class="card-body">
+            <p class="explanation">
+                当某些格子被显式指定后，剩余格子默认按 <code>row</code> 逐行填。
+                设为 <code>column</code> 则按列填，<code>dense</code> 会"回填"前面的空位。
+            </p>
+            <div class="demo-area" id="demo10" style="grid-template-columns: repeat(4, 1fr); grid-auto-rows: 50px;">
+                <div class="grid-box" style="background:#ef4444">1</div>
+                <!-- 第 2 个元素显式跨 2 列，会在下方留下一个空位 -->
+                <div class="grid-box" style="background:#3b82f6; grid-column: span 2;">2 (跨2)</div>
+                <div class="grid-box" style="background:#10b981">3</div>
+                <div class="grid-box" style="background:#f59e0b">4</div>
+                <div class="grid-box" style="background:#8b5cf6">5</div>
+                <div class="grid-box" style="background:#ec4899">6</div>
+                <div class="grid-box" style="background:#06b6d4">7</div>
+            </div>
+            <div class="controls">
+                <button onclick="setFlow('row')" class="active">row (默认)</button>
+                <button onclick="setFlow('row dense')">row dense</button>
+                <button onclick="setFlow('column')">column</button>
+                <button onclick="setFlow('column dense')">column dense</button>
+            </div>
+            <div class="css-output" id="css10"><span class="prop">.grid</span> { }</div>
+            <div class="tip">💡 <code>dense</code> 可以让后面的小元素填补前面的空隙，让布局更紧凑</div>
+        </div>
+    </div>
+
+    <!-- ========== 总结：属性速查表 ========== -->
+    <div class="card full-width">
+        <div class="card-title"><span class="num">📋</span> 属性速查表</div>
+        <div class="card-body">
+            <div class="demo-area" style="padding: 20px;">
+                <table style="width:100%; border-collapse: collapse; font-size: 0.9em;">
+                    <thead>
+                        <tr style="background: #eef2ff;">
+                            <th style="padding:10px; text-align:left; border-radius:6px 0 0 0;">分类</th>
+                            <th style="padding:10px; text-align:left;">属性</th>
+                            <th style="padding:10px; text-align:left; border-radius:0 6px 0 0;">作用</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding:8px 10px; border-top:1px solid #e5e7eb;" rowspan="4" valign="top">
+                                <b>容器属性</b>
+                            </td>
+                            <td style="padding:8px 10px; border-top:1px solid #e5e7eb;">display: grid</td>
+                            <td style="padding:8px 10px; border-top:1px solid #e5e7eb;">创建块级网格容器</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:8px 10px;">grid-template-columns / rows</td>
+                            <td style="padding:8px 10px;">定义列数/行数和尺寸</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:8px 10px;">gap / row-gap / column-gap</td>
+                            <td style="padding:8px 10px;">设置格子间距</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:8px 10px;">grid-auto-flow</td>
+                            <td style="padding:8px 10px;">子元素自动排列方向</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:8px 10px; border-top:1px solid #e5e7eb;" rowspan="4" valign="top">
+                                <b>子项属性</b>
+                            </td>
+                            <td style="padding:8px 10px; border-top:1px solid #e5e7eb;">grid-column / grid-row</td>
+                            <td style="padding:8px 10px; border-top:1px solid #e5e7eb;">指定起始线/结束线，实现跨格</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:8px 10px;">grid-area</td>
+                            <td style="padding:8px 10px;">给子项命名，或简写行列位置</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:8px 10px;">justify-self / align-self</td>
+                            <td style="padding:8px 10px;">单独控制当前子项对齐</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:8px 10px;">order</td>
+                            <td style="padding:8px 10px;">改变子项排列顺序（默认 0）</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:8px 10px; border-top:1px solid #e5e7eb;" rowspan="3" valign="top">
+                                <b>辅助函数</b>
+                            </td>
+                            <td style="padding:8px 10px; border-top:1px solid #e5e7eb;">repeat(n, value)</td>
+                            <td style="padding:8px 10px;">重复书写 n 次 value</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:8px 10px;">minmax(min, max)</td>
+                            <td style="padding:8px 10px;">限定尺寸的范围</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:8px 10px;">auto-fit / auto-fill</td>
+                            <td style="padding:8px 10px;">自动创建尽可能多的列/行</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- JavaScript：初始化 10 个 demo 的 Grid 样式 + 按钮交互逻辑           -->
+    <!-- 每个知识点的演示区都是通过 JS 动态设置 display:grid 等属性的        -->
+    <!-- 按钮点击 → 更新 demo 样式 → 同步更新代码框中的 CSS 文本           -->
+    <!-- ==================================================================== -->
+    <script>
+        /* ========== 知识点 1 初始化：1fr 2fr 1fr 三列 ========== */
+        const demo1 = document.getElementById('demo1');
+        demo1.style.display = 'grid';
+        demo1.style.gridTemplateColumns = '1fr 2fr 1fr';
+        demo1.style.gap = '10px';
+
+        /* ========== 知识点 2 初始化：3 列 × 2 行 ========== */
+        const demo2 = document.getElementById('demo2');
+        demo2.style.display = 'grid';
+        demo2.style.gridTemplateColumns = 'repeat(3, 1fr)';
+        demo2.style.gap = '10px';
+
+        /**
+         * 知识点 2 按钮回调：切换 gap 值
+         * @param {number} n - 新的 gap 像素值
+         */
+        function setGap(n) {
+            demo2.style.gap = n + 'px';
+            updateCSS('css2', `.card #demo2 {\n    <span class="prop">gap</span>: <span class="val">${n}px</span>;\n}`);
+            // 切换按钮高亮状态
+            document.querySelectorAll('.controls button').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        /* ========== 知识点 3 初始化：repeat(3, 1fr) ========== */
+        const demo3 = document.getElementById('demo3');
+        demo3.style.display = 'grid';
+        demo3.style.gridTemplateColumns = 'repeat(3, 1fr)';
+        demo3.style.gap = '10px';
+
+        /**
+         * 知识点 3 按钮回调：切换 repeat 的次数
+         * @param {number} n - 要重复的次数（2/3/4）
+         * 动态生成 n×2 个子项并重新着色
+         */
+        function setRepeat(n) {
+            demo3.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
+            demo3.innerHTML = '';
+            const count = n * 2;
+            const colors = ['#6366f1', '#a855f7', '#ec4899', '#14b8a6', '#f97316', '#22c55e', '#0ea5e9', '#f43f5e'];
+            for (let i = 0; i < count; i++) {
+                const d = document.createElement('div');
+                d.className = 'grid-box';
+                d.style.background = colors[i % colors.length];
+                d.textContent = i + 1;
+                demo3.appendChild(d);
+            }
+            updateCSS('css3', `.card #demo3 {\n    <span class="prop">grid-template-columns</span>: <span class="val">repeat(${n}, 1fr)</span>;\n}`);
+            document.querySelectorAll('#demo3+.controls button').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        /**
+         * 知识点 3 特殊按钮：repeat(2, 100px 1fr) 交替模式
+         * 效果：固定宽列 → 弹性列 → 固定宽列 → 弹性列 ...
+         */
+        function setRepeatAlt() {
+            demo3.style.gridTemplateColumns = 'repeat(2, 100px 1fr)';
+            demo3.innerHTML = '';
+            const colors = ['#6366f1', '#a855f7', '#ec4899', '#14b8a6', '#f97316', '#22c55e', '#0ea5e9', '#f43f5e'];
+            for (let i = 0; i < 6; i++) {
+                const d = document.createElement('div');
+                d.className = 'grid-box';
+                d.style.background = colors[i % colors.length];
+                d.textContent = i + 1;
+                demo3.appendChild(d);
+            }
+            updateCSS('css3', `.card #demo3 {\n    <span class="prop">grid-template-columns</span>: <span class="val">repeat(2, 100px 1fr)</span>;\n}`);
+            document.querySelectorAll('#demo3+.controls button').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        /* ========== 知识点 4：HTML 里直接内联 grid-column，JS 只负责初始化 ========== */
+        const demo4 = document.getElementById('demo4');
+        demo4.style.display = 'grid';
+        demo4.style.gridTemplateColumns = 'repeat(3, 1fr)';
+        demo4.style.gap = '10px';
+
+        /* ========== 知识点 5：HTML 里直接内联 grid-template-areas ========== */
+        const demo5 = document.getElementById('demo5');
+        demo5.style.display = 'grid';
+        demo5.style.gap = '10px';
+
+        /* ========== 知识点 6：2×2 网格，stretch 为默认对齐 ========== */
+        const demo6 = document.getElementById('demo6');
+        demo6.style.display = 'grid';
+        demo6.style.gridTemplateColumns = 'repeat(2, 1fr)';
+        demo6.style.gridTemplateRows = 'repeat(2, 1fr)';
+        demo6.style.gap = '10px';
+        demo6.style.height = '200px';
+        demo6.style.justifyItems = 'stretch';
+        demo6.style.alignItems = 'stretch';
+
+        /**
+         * 知识点 6 按钮回调：切换单元格内对齐方式
+         * @param {string} j - justify-items 的值（start/center/end/stretch）
+         * @param {string} a - align-items 的值
+         */
+        function setAlign(j, a) {
+            demo6.style.justifyItems = j;
+            demo6.style.alignItems = a;
+            updateCSS('css6', `.card #demo6 {\n    <span class="prop">justify-items</span>: <span class="val">${j}</span>;\n    <span class="prop">align-items</span>: <span class="val">${a}</span>;\n}`);
+            document.querySelectorAll('#demo6+.controls button').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        /* ========== 知识点 7：子项用 auto 尺寸，留出容器空间让 content 对齐生效 ========== */
+        const demo7 = document.getElementById('demo7');
+        demo7.style.display = 'grid';
+        demo7.style.gridTemplateColumns = 'repeat(2, auto)';
+        demo7.style.gridTemplateRows = 'repeat(2, auto)';
+        demo7.style.gap = '10px';
+        demo7.style.justifyContent = 'start';
+        demo7.style.alignContent = 'start';
+
+        /**
+         * 知识点 7 按钮回调：切换整个网格在容器中的对齐方式
+         * @param {string} v - start / center / end / space-between / space-around
+         */
+        function setContent(v) {
+            demo7.style.justifyContent = v;
+            demo7.style.alignContent = v;
+            updateCSS('css7', `.card #demo7 {\n    <span class="prop">justify-content</span>: <span class="val">${v}</span>;\n    <span class="prop">align-content</span>: <span class="val">${v}</span>;\n}`);
+            document.querySelectorAll('#demo7+.controls button').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        /* ========== 知识点 8：auto-fit 自适应列数 ========== */
+        const demo8 = document.getElementById('demo8');
+        demo8.style.display = 'grid';
+        demo8.style.gap = '10px';
+        demo8.style.gridTemplateColumns = 'repeat(auto-fit, minmax(140px, 1fr))';
+
+        /**
+         * 知识点 8 按钮回调：在 auto-fit 和 auto-fill 间切换，同时调整最小宽度
+         * @param {string} mode - 'auto-fit' 或 'auto-fill'
+         * @param {number} min  - minmax 中的最小宽度（px）
+         */
+        function setAuto(mode, min) {
+            demo8.style.gridTemplateColumns = `repeat(${mode}, minmax(${min}px, 1fr))`;
+            updateCSS('css8', `.card #demo8 {\n    <span class="prop">grid-template-columns</span>: <span class="val">repeat(${mode}, minmax(${min}px, 1fr))</span>;\n}`);
+            document.querySelectorAll('#demo8+.controls button').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        /* ========== 知识点 9：minmax(150px, 1fr) ========== */
+        const demo9 = document.getElementById('demo9');
+        demo9.style.display = 'grid';
+        demo9.style.gap = '10px';
+        demo9.style.gridTemplateColumns = 'repeat(3, minmax(150px, 1fr))';
+
+        /**
+         * 知识点 9 按钮回调：切换 minmax 的最小宽度
+         * @param {number} min - 最小宽度像素值（80/150/220）
+         */
+        function setMinmax(min) {
+            demo9.style.gridTemplateColumns = `repeat(3, minmax(${min}px, 1fr))`;
+            updateCSS('css9', `.card #demo9 {\n    <span class="prop">grid-template-columns</span>: <span class="val">repeat(3, minmax(${min}px, 1fr))</span>;\n}`);
+            document.querySelectorAll('#demo9+.controls button').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        /* ========== 知识点 10：4 列 grid-auto-flow: row ========== */
+        const demo10 = document.getElementById('demo10');
+        demo10.style.display = 'grid';
+        demo10.style.gap = '8px';
+        demo10.style.gridAutoFlow = 'row';
+
+        /**
+         * 知识点 10 按钮回调：切换自动排列方向
+         * @param {string} v - 'row' / 'column' / 'row dense' / 'column dense'
+         */
+        function setFlow(v) {
+            demo10.style.gridAutoFlow = v;
+            updateCSS('css10', `.card #demo10 {\n    <span class="prop">grid-auto-flow</span>: <span class="val">${v}</span>;\n}`);
+            document.querySelectorAll('#demo10+.controls button').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        /* ========== 通用工具函数：更新代码框中的 CSS 文本 ========== */
+        /**
+         * 将带样式标签的 HTML 文本写入指定元素
+         * @param {string} id  - 目标元素的 id（如 'css2'、'css6'）
+         * @param {string} html - 包含高亮标签的 HTML 字符串
+         */
+        function updateCSS(id, html) {
+            document.getElementById(id).innerHTML = html;
+        }
+
+        /* ========== 页面加载完成后，同步所有代码框的初始状态 ========== */
+        updateCSS('css2', `<span class="prop">.grid</span> {\n    <span class="prop">gap</span>: <span class="val">10px</span>;\n}`);
+        updateCSS('css3', `<span class="prop">.grid</span> {\n    <span class="prop">grid-template-columns</span>: <span class="val">repeat(3, 1fr)</span>;\n}`);
+        updateCSS('css6', `<span class="prop">.grid</span> {\n    <span class="prop">justify-items</span>: <span class="val">stretch</span>;\n    <span class="prop">align-items</span>: <span class="val">stretch</span>;\n}`);
+        updateCSS('css7', `<span class="prop">.grid</span> {\n    <span class="prop">justify-content</span>: <span class="val">start</span>;\n    <span class="prop">align-content</span>: <span class="val">start</span>;\n}`);
+        updateCSS('css8', `<span class="prop">.grid</span> {\n    <span class="prop">grid-template-columns</span>: <span class="val">repeat(auto-fit, minmax(140px, 1fr))</span>;\n}`);
+        updateCSS('css9', `<span class="prop">.grid</span> {\n    <span class="prop">grid-template-columns</span>: <span class="val">repeat(3, minmax(150px, 1fr))</span>;\n}`);
+        updateCSS('css10', `<span class="prop">.grid</span> {\n    <span class="prop">grid-auto-flow</span>: <span class="val">row</span>;\n}`);
+    </script>
+</body>
+
+</html>

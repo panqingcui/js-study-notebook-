@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多列布局</title>
+    <style>
+        /* 多列布局 */
+        .box {
+            /* 多列布局 */
+            /* 3列 */
+            column-count: 3;
+            /* 列间距 */
+            column-gap: 20px;
+            /* 列边框 */
+            column-rule: 1px solid #000;
+            /* 避免元素跨列 */
+            break-inside: avoid;
+            width: 800px;
+        }
+
+        .item {
+            width: 40px;
+            height: 40px;
+            background-color: aqua;
+            line-height: 40px;
+            text-align: center;
+            padding: 10px;
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="box">
+        <div class="item">1</div>
+        <div class="item">2</div>
+        <div class="item">3</div>
+        <div class="item">4</div>
+        <div class="item">5</div>
+        <div class="item"> 6</div>
+        <div class="item">7</div>
+        <div class="item">8</div>
+        <div class="item">9</div>
+        <div class="item">10</div>
+        <div class="item"> 11</div>
+        <div class="item"> 12</div>
+    </div>
+</body>
+
+</html>

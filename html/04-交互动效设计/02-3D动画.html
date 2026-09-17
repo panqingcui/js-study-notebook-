@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D 变换动画</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .page-header {
+            text-align: center;
+            color: #fff;
+            margin-bottom: 40px;
+        }
+
+        .page-header h1 {
+            font-size: 2.4em;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+            margin-bottom: 10px;
+        }
+
+        .page-header p {
+            font-size: 1.1em;
+            opacity: 0.85;
+        }
+
+        body>p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1em;
+            line-height: 1.7;
+            margin-bottom: 8px;
+            max-width: 720px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(520px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .explanation {
+            font-size: 0.92em;
+            color: #475569;
+            margin-bottom: 14px;
+            line-height: 1.65;
+        }
+
+        .explanation code {
+            background: #e0e7ff;
+            color: #4338ca;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .card-title {
+            background: linear-gradient(90deg, #0ea5e9 0%, #8b5cf6 100%);
+            color: #fff;
+            padding: 16px 22px;
+            font-size: 1.15em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title .num {
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85em;
+        }
+
+        .card-body {
+            padding: 20px 22px 22px;
+        }
+
+        .demo-area {
+            border: 2px dashed #c7d2fe;
+            border-radius: 10px;
+            padding: 20px;
+            background: #f8fafc;
+            min-height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .controls {
+            margin-top: 14px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .controls button {
+            padding: 7px 14px;
+            border: none;
+            background: #e0e7ff;
+            color: #3730a3;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.2s;
+        }
+
+        .controls button:hover {
+            background: #c7d2fe;
+        }
+
+        .controls button.active {
+            background: #4f46e5;
+            color: #fff;
+        }
+
+        .label-box {
+            font-size: 0.78em;
+            color: #64748b;
+            margin-top: 8px;
+            font-family: "JetBrains Mono", "Fira Code", monospace;
+            background: #f1f5f9;
+            padding: 6px 10px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        /* ========== 3D 基础通用 ========== */
+
+        .stage {
+            width: 160px;
+            height: 160px;
+            position: relative;
+            transition: perspective 0.4s ease;
+        }
+
+        .stage-inner {
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.8s ease;
+        }
+
+        .box {
+            width: 80px;
+            height: 80px;
+            margin: 40px auto;
+            border-radius: 8px;
+            color: #fff;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            transition: transform 0.8s ease;
+        }
+
+        /* ========== 卡片 1：perspective 透视 ========== */
+
+        .perspective-demo .box {
+            transform: rotateY(45deg);
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        }
+
+        /* ========== 卡片 2：perspective-origin ========== */
+
+        .origin-stage {
+            perspective: 600px;
+            perspective-origin: 50% 50%;
+            transition: perspective-origin 0.5s ease;
+        }
+
+        .origin-stage .stage-inner {
+            transform: rotateY(30deg) rotateX(-15deg);
+        }
+
+        .origin-stage .box {
+            background: linear-gradient(135deg, #0ea5e9, #22d3ee);
+        }
+
+        /* ========== 卡片 3：3D 旋转 ========== */
+
+        .rotate-stage {
+            perspective: 600px;
+            perspective-origin: 50% 50%;
+        }
+
+        .rotate-stage .box {
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+        }
+
+        /* ========== 卡片 4：translateZ 深度 ========== */
+
+        .translatez-stage {
+            perspective: 800px;
+        }
+
+        .translatez-stage .box {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        /* ========== 卡片 5：preserve-3d 立方体 ========== */
+
+        .cube-stage {
+            perspective: 700px;
+        }
+
+        .cube {
+            width: 110px;
+            height: 110px;
+            position: relative;
+            /* 3D 变换需要开启 3D 模式 */
+            transform-style: preserve-3d;
+            margin: 10px auto;
+            transition: transform 0.8s ease;
+        }
+
+        .cube-face {
+            position: absolute;
+            width: 110px;
+            height: 110px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #fff;
+            font-size: 1.1em;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            /* 隐藏背面面 */
+            backface-visibility: visible;
+        }
+
+        .cube-face.front {
+            background: rgba(99, 102, 241, 0.85);
+            transform: translateZ(55px);
+        }
+
+        .cube-face.back {
+            background: rgba(139, 92, 246, 0.85);
+            transform: rotateY(180deg) translateZ(55px);
+        }
+
+        .cube-face.right {
+            background: rgba(236, 72, 153, 0.85);
+            transform: rotateY(90deg) translateZ(55px);
+        }
+
+        .cube-face.left {
+            background: rgba(245, 158, 11, 0.85);
+            transform: rotateY(-90deg) translateZ(55px);
+        }
+
+        .cube-face.top {
+            background: rgba(16, 185, 129, 0.85);
+            transform: rotateX(90deg) translateZ(55px);
+        }
+
+        .cube-face.bottom {
+            background: rgba(6, 182, 212, 0.85);
+            transform: rotateX(-90deg) translateZ(55px);
+        }
+
+        /* ========== 卡片 6：backface-visibility ========== */
+
+        .flip-stage {
+            /* 透视距离 */
+            perspective: 600px;
+        }
+
+        .flip-card {
+            width: 140px;
+            height: 140px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s ease;
+            margin: 0 auto;
+        }
+
+        .flip-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.3em;
+            color: #fff;
+            backface-visibility: hidden;
+        }
+
+        .flip-front {
+            background: linear-gradient(135deg, #6366f1, #3b82f6);
+        }
+
+        .flip-back {
+            background: linear-gradient(135deg, #ec4899, #f43f5e);
+            transform: rotateY(180deg);
+        }
+
+        /* ========== 卡片 7：组合变换 ========== */
+
+        .combo-stage {
+            perspective: 700px;
+        }
+
+        .combo-stage .box {
+            background: linear-gradient(135deg, #1e293b, #475569);
+            border: 2px solid #64748b;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-header">
+        <h1>🧊 3D 变换动画</h1>
+        <p>交互式学习 · CSS transform-style / perspective / rotateX / translateZ</p>
+    </div>
+    <p>
+        CSS 3D 变换让元素可以在三维空间中移动和旋转。要产生真正的 3D 效果，缺一不可：
+        <code>perspective</code>（透视）、<code>transform-style: preserve-3d</code>（保留3D空间）、
+        以及 <code>rotateX/Y/Z</code> / <code>translateZ</code> 等 3D 函数。
+    </p>
+    <p>
+        2D 变换函数：<code>translate(x,y)</code> / <code>scale()</code> / <code>rotate()</code> / <code>skew()</code>
+        <br>
+        3D 变换函数：<code>translate3d(x,y,z)</code> / <code>translateZ(z)</code> /
+        <code>rotateX(angle)</code> / <code>rotateY(angle)</code> / <code>rotateZ(angle)</code> /
+        <code>scale3d()</code> / <code>scaleZ()</code>
+    </p>
+
+    <div class="container">
+
+        <!-- 卡片 1：perspective 透视 -->
+        <div class="card">
+            <div class="card-title">
+                <span class="num">1</span> perspective 透视距离
+            </div>
+            <p class="explanation">
+                <code>perspective: 600px</code> 设置观察者距离元素多远，值越小透视效果越强烈（近大远小越夸张），
+                值越大越接近 2D 平面。必须设置在父元素上，子元素才有 3D 效果。
+            </p>
+            <div class="card-body">
+                <div class="demo-area">
+                    <div class="stage perspective-demo transform-target" style="perspective: 300px">
+                        <div class="box">A</div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button data-perspective="200" class="active">perspective: 200px（强烈）</button>
+                    <button data-perspective="400">perspective: 400px</button>
+                    <button data-perspective="800">perspective: 800px</button>
+                    <button data-perspective="1500">perspective: 1500px（微弱）</button>
+                </div>
+                <div class="label-box" data-label="label">当前 perspective: 200px</div>
+            </div>
+        </div>
+
+        <!-- 卡片 2：perspective-origin 透视方向 -->
+        <div class="card">
+            <div class="card-title">
+                <span class="num">2</span> perspective-origin 透视方向
+            </div>
+            <p class="explanation">
+                <code>perspective-origin</code> 决定透视从哪个方向看，默认 <code>50% 50%</code>（正中心）。
+                第一个值水平位置，第二个值垂直位置。改变它就像移动观察者的视角。
+            </p>
+            <div class="card-body">
+                <div class="demo-area">
+                    <div class="stage origin-stage transform-target">
+                        <div class="stage-inner">
+                            <div class="box">B</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button data-origin="50% 50%" class="active">正中心 50% 50%</button>
+                    <button data-origin="0% 50%">左侧 0% 50%</button>
+                    <button data-origin="100% 50%">右侧 100% 50%</button>
+                    <button data-origin="50% 0%">顶部 50% 0%</button>
+                    <button data-origin="50% 100%">底部 50% 100%</button>
+                    <button data-origin="100% 0%">右上角</button>
+                </div>
+                <div class="label-box" data-label="label">当前 perspective-origin: 50% 50%</div>
+            </div>
+        </div>
+
+        <!-- 卡片 3：3D 旋转 -->
+        <div class="card">
+            <div class="card-title">
+                <span class="num">3</span> rotateX / rotateY / rotateZ 三轴旋转
+            </div>
+            <p class="explanation">
+                <code>rotateX(angle)</code> 绕水平轴翻转（类似翻书，正面向上翻起），
+                <code>rotateY(angle)</code> 绕垂直轴翻转（类似开门，像旋转门），
+                <code>rotateZ(angle)</code> 绕 Z 轴旋转（和 2D 的 <code>rotate()</code> 完全相同）。
+            </p>
+            <div class="card-body">
+                <div class="demo-area">
+                    <div class="stage rotate-stage">
+                        <div class="box transform-target">C</div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button data-transform="rotateX(0deg) rotateY(0deg)" class="active">不旋转</button>
+                    <button data-transform="rotateX(45deg)">rotateX(45°)</button>
+                    <button data-transform="rotateX(-60deg)">rotateX(-60°)</button>
+                    <button data-transform="rotateY(45deg)">rotateY(45°)</button>
+                    <button data-transform="rotateY(-90deg)">rotateY(-90°)</button>
+                    <button data-transform="rotateX(30deg) rotateY(30deg) rotateZ(15deg)">三轴同时旋转</button>
+                </div>
+                <div class="label-box" data-label="label">无旋转</div>
+            </div>
+        </div>
+
+        <!-- 卡片 4：translateZ 深度 -->
+        <div class="card">
+            <div class="card-title">
+                <span class="num">4</span> translateZ 深度推拉
+            </div>
+            <p class="explanation">
+                <code>translateZ(+npx)</code> 让元素靠近观察者（视觉上变大），
+                <code>translateZ(-npx)</code> 让元素远离观察者（视觉上变小）。
+                3D 平移还有简写 <code>translate3d(x, y, z)</code>，触发 GPU 加速，性能更好。
+            </p>
+            <div class="card-body">
+                <div class="demo-area">
+                    <div class="stage translatez-stage">
+                        <div class="box transform-target">D</div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button data-transform="translateZ(0px)" class="active">原始位置 translateZ(0)</button>
+                    <button data-transform="translateZ(120px)">靠近 +120px</button>
+                    <button data-transform="translateZ(250px)">靠近 +250px</button>
+                    <button data-transform="translateZ(-80px)">远离 -80px</button>
+                    <button data-transform="translateZ(-200px)">远离 -200px</button>
+                </div>
+                <div class="label-box" data-label="label">translateZ(0px)</div>
+            </div>
+        </div>
+
+        <!-- 卡片 5：preserve-3d 立方体 -->
+        <div class="card">
+            <div class="card-title">
+                <span class="num">5</span> transform-style: preserve-3d 立方体
+            </div>
+            <p class="explanation">
+                <code>transform-style: preserve-3d</code> 是构建 3D 场景的关键属性，
+                让子元素保留在真正的三维空间中（默认 <code>flat</code> 会把子元素压扁到父元素平面上）。
+                立方体六个面分别用 <code>translateZ(±55px)</code> 放前后，
+                <code>rotateX/Y(±90deg)</code> 转到上下左右。
+            </p>
+            <div class="card-body">
+                <div class="demo-area">
+                    <div class="stage cube-stage">
+                        <div class="cube transform-target">
+                            <div class="cube-face front">前</div>
+                            <div class="cube-face back">后</div>
+                            <div class="cube-face right">右</div>
+                            <div class="cube-face left">左</div>
+                            <div class="cube-face top">上</div>
+                            <div class="cube-face bottom">下</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button data-transform="rotateX(-20deg) rotateY(-30deg)" class="active">默认视角</button>
+                    <button data-transform="rotateX(0deg) rotateY(0deg)">正面</button>
+                    <button data-transform="rotateX(-90deg) rotateY(0deg)">俯视</button>
+                    <button data-transform="rotateX(0deg) rotateY(90deg)">右侧面</button>
+                    <button data-transform="rotateX(360deg) rotateY(360deg)">完整旋转</button>
+                </div>
+                <div class="label-box" data-label="label">默认视角</div>
+            </div>
+        </div>
+
+        <!-- 卡片 6：backface-visibility 翻转卡片 -->
+        <div class="card">
+            <div class="card-title">
+                <span class="num">6</span> backface-visibility 背面隐藏
+            </div>
+            <p class="explanation">
+                <code>backface-visibility: hidden</code> 让元素翻转到背面时不可见（像扑克牌）。
+                配合 <code>preserve-3d</code> + <code>rotateY(180deg)</code> 实现两面不同内容的卡片翻转。
+                若设置为 <code>visible</code>，翻转后会看到镜像文字。
+            </p>
+            <div class="card-body">
+                <div class="demo-area">
+                    <div class="stage flip-stage">
+                        <div class="flip-card transform-target">
+                            <div class="flip-face flip-front">正面</div>
+                            <div class="flip-face flip-back">背面</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button data-transform="rotateY(0deg)" class="active">显示正面</button>
+                    <button data-transform="rotateY(90deg)">侧翻 90°</button>
+                    <button data-transform="rotateY(180deg)">翻到背面</button>
+                    <button data-transform="rotateY(360deg)">转一整圈</button>
+                    <button data-transform="rotateX(180deg)">上下翻转</button>
+                </div>
+                <div class="label-box" data-label="label">rotateY(0deg)</div>
+            </div>
+        </div>
+
+        <!-- 卡片 7：组合变换 translate3d + rotate + scale -->
+        <div class="card">
+            <div class="card-title">
+                <span class="num">7</span> 组合变换 translate3d + rotate + scale
+            </div>
+            <p class="explanation">
+                多个变换函数可以写在同一个 <code>transform</code> 中，空格分隔。
+                <code>translate3d(x, y, z)</code> 同时设置三轴平移，
+                浏览器会把它放在独立的 GPU 图层上，性能比分别写 <code>translateX</code>/<code>translateY</code>/<code>translateZ</code> 更好。
+            </p>
+            <div class="card-body">
+                <div class="demo-area">
+                    <div class="stage combo-stage">
+                        <div class="box transform-target">E</div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button data-transform="translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg) scale(1)"
+                        class="active">原始状态</button>
+                    <button data-transform="translate3d(40px, -30px, 60px) rotateY(30deg) scale(1.1)">右上近移</button>
+                    <button data-transform="translate3d(-40px, 30px, -60px) rotateY(-30deg) scale(0.8)">左下远移</button>
+                    <button
+                        data-transform="translate3d(0, 0, 100px) rotateX(45deg) rotateY(45deg) scale(1.2)">近距离旋转放大</button>
+                    <button
+                        data-transform="translate3d(0, 0, -100px) rotateX(-45deg) rotateY(-45deg) scale(0.7)">远距离旋转缩小</button>
+                </div>
+                <div class="label-box" data-label="label">原始状态</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        document.querySelectorAll('.card').forEach(card => {
+            const buttons = card.querySelectorAll('.controls button');
+            const label = card.querySelector('[data-label="label"]');
+            const target = card.querySelector('.transform-target');
+
+            if (!target) return;
+
+            buttons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (btn.dataset.perspective) {
+                        target.style.perspective = btn.dataset.perspective + 'px';
+                        if (label) label.textContent = '当前 perspective: ' + btn.dataset.perspective + 'px';
+                    } else if (btn.dataset.origin) {
+                        target.style.perspectiveOrigin = btn.dataset.origin;
+                        if (label) label.textContent = '当前 perspective-origin: ' + btn.dataset.origin;
+                    } else if (btn.dataset.transform) {
+                        target.style.transform = btn.dataset.transform;
+                        if (label) label.textContent = btn.dataset.transform;
+                    }
+
+                    buttons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

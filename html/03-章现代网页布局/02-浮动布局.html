@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>float 脱离文档流 vs absolute 脱离文档流</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            padding: 40px;
+            background: #f5f7fa;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 40px;
+        }
+
+        .demo-section {
+            max-width: 800px;
+            margin: 0 auto 50px;
+        }
+
+        .demo-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding-left: 10px;
+            border-left: 4px solid #e74c3c;
+            color: #34495e;
+        }
+
+        .container {
+            background: #dfe6e9;
+            border: 2px dashed #b2bec3;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+
+        .box {
+            width: 120px;
+            height: 60px;
+            color: #fff;
+            text-align: center;
+            line-height: 60px;
+            font-weight: bold;
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+
+        .pink {
+            background: #fd79a8;
+        }
+
+        .blue {
+            background: #74b9ff;
+        }
+
+        .green {
+            background: #55efc4;
+            color: #2d3436;
+        }
+
+        .orange {
+            background: #fab1a0;
+            color: #2d3436;
+        }
+
+        .tip {
+            background: #fff;
+            padding: 12px 15px;
+            border-radius: 6px;
+            font-size: 14px;
+            line-height: 1.8;
+            color: #2d3436;
+            border-left: 4px solid #0984e3;
+            margin-bottom: 30px;
+        }
+
+        .tip strong {
+            color: #e74c3c;
+        }
+
+        /* ==================== 实验1：默认（不浮动） ==================== */
+        .exp1 .box {
+            margin-bottom: 5px;
+        }
+
+        /* ==================== 实验2：float: left ==================== */
+        .exp2 .box:first-child {
+            float: left;
+            margin-right: 10px;
+        }
+
+        .exp2::after {
+            content: "";
+            display: block;
+            clear: both;
+        }
+
+        /* ==================== 实验3：position: absolute ==================== */
+        .exp3 {
+            position: relative;
+            height: 90px;
+        }
+
+        .exp3 .box:first-child {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+
+        /* ==================== 实验4：float + 第二个div设置宽度 ==================== */
+        .exp4 .box:first-child {
+            float: left;
+        }
+
+        .exp4 .box:last-child {
+            width: auto;
+            height: 60px;
+            line-height: 60px;
+            background: #74b9ff;
+            color: #fff;
+            float: none;
+            padding-left: 135px;
+            text-align: left;
+        }
+
+        .exp4::after {
+            content: "";
+            display: block;
+            clear: both;
+        }
+
+        /* ==================== 核心总结对比卡片 ==================== */
+        .compare-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .compare-card {
+            padding: 20px;
+            border-radius: 10px;
+            color: #fff;
+        }
+
+        .compare-card.float-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .compare-card.absolute-card {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+
+        .compare-card h3 {
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .compare-card ul {
+            list-style: none;
+            font-size: 14px;
+            line-height: 1.9;
+        }
+
+        .compare-card li::before {
+            content: "✦ ";
+        }
+
+        .diagram {
+            background: #fff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            font-family: monospace;
+            font-size: 13px;
+            color: #2d3436;
+            border: 1px solid #dfe6e9;
+        }
+
+        .diagram .pink-block {
+            display: inline-block;
+            background: #fd79a8;
+            color: #fff;
+            padding: 3px 8px;
+            border-radius: 3px;
+        }
+
+        .diagram .blue-block {
+            display: inline-block;
+            background: #74b9ff;
+            color: #fff;
+            padding: 3px 8px;
+            border-radius: 3px;
+        }
+
+        .diagram .fade {
+            opacity: 0.4;
+            text-decoration: line-through;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔬 float vs absolute 脱离文档流对比实验</h1>
+    <p class="subtitle">搞懂为什么浮动后两个 div 在同一行，而不是互相覆盖</p>
+
+    <!-- ==================== 实验1：默认状态 ==================== -->
+    <div class="demo-section">
+        <div class="demo-title">实验 ①：两个普通 div（默认不浮动）</div>
+        <div class="container exp1">
+            <div class="box pink">pink div</div>
+            <div class="box blue">blue div</div>
+        </div>
+        <div class="tip">
+            <b>结果：</b>两个 div 各自独占一行，从上到下排列。<br>
+            <b>原因：</b>块级元素默认 <code>width: 100%</code>，一个占一行。
+        </div>
+    </div>
+
+    <!-- ==================== 实验2：只有第一个 div 浮动 ==================== -->
+    <div class="demo-section">
+        <div class="demo-title">实验 ②：只有 pink div 设置 float: left</div>
+        <div class="container exp2">
+            <div class="box pink" style="width: 120px;">pink div（float: left）</div>
+            <div class="box blue" style="width: 120px;">blue div（不浮动）</div>
+        </div>
+        <div class="tip">
+            <b>⚠️ 你现在看到的效果：</b>两个 div 在<b>同一行</b>，并排排列！<br><br>
+            <b>你的疑问：</b>pink 都脱离文档流了，blue 应该完全占据 pink 的位置啊？<br><br>
+            <b>真正的原因：</b>
+            <ol>
+                <li>pink 浮动后 → <strong>脱离文档流</strong>，不再占原来的整行空间</li>
+                <li>blue 顶上来了 → <strong>没错，它确实顶上来了</strong>！只是... </li>
+                <li>但 pink 虽然"飘"起来了，它<strong>还在那挡着</strong>（像水里漂的木头）</li>
+                <li>blue 想占整行，但被漂浮的 pink 挡住了，只能排在 pink 的<strong>右边</strong></li>
+            </ol>
+        </div>
+
+        <div class="diagram">
+            <b>用图画出来就是：</b><br><br>
+            文档流以为 pink 不存在了，blue 顶上来 ↓<br>
+            但 pink 还"浮"在那里挡着 ↓<br><br>
+            ┌─────────────────────────────────────┐<br>
+            │ <span class="pink-block">pink（漂浮挡路）</span> <span class="blue-block">blue（顶上来了，但被挤到右边）</span> │<br>
+            └─────────────────────────────────────┘<br><br>
+            <span class="fade">如果 pink 真的"消失"了，blue 才会占满整行 →</span> <span class="blue-block fade">blue 100% 宽</span>
+        </div>
+    </div>
+
+    <!-- ==================== 实验3：position: absolute ==================== -->
+    <div class="demo-section">
+        <div class="demo-title">实验 ③：pink div 改用 position: absolute（这才是"真消失"）</div>
+        <div class="container exp3">
+            <div class="box pink">pink div（absolute）</div>
+            <div class="box blue">blue div（不浮动）</div>
+        </div>
+        <div class="tip">
+            <b>🎯 看这里！</b>blue div 完全占据了 pink 的位置，甚至在 pink 的<b>上面</b>！<br>
+            <b>原因：</b> <code>position: absolute</code> 才是真的"脱离文档流 + 不占任何空间"，就像元素消失了一样。后面的元素会彻底顶上来，包括覆盖它。
+        </div>
+    </div>
+
+    <!-- ==================== 实验4：理解 "浮动 + 不浮动" 的本质 ==================== -->
+    <div class="demo-section">
+        <div class="demo-title">实验 ④：换个方式理解——浮动只影响"它后面"的元素</div>
+        <div class="container exp4">
+            <div class="box pink" style="width: 120px;">pink（左浮动）</div>
+            <div class="green" style="padding: 15px; font-weight: bold; border-radius: 4px;">
+                这里是 blue div 的区域（不浮动，被 pink 的浮动挤到了右边）
+            </div>
+        </div>
+        <div class="tip">
+            <b>关键认知：</b>blue div 并不是"被挤到右边去了"，而是它<b>本来就顶上来了</b>，只是 pink 挡住了它的一部分空间。<br>
+            如果你仔细看，blue div 的<b>顶部</b>其实和 pink 的顶部是<b>对齐的</b>——说明 blue 确实顶上来了，只是宽度被 pink 挡掉了一块。
+        </div>
+    </div>
+
+    <!-- ==================== 核心总结 ==================== -->
+    <div class="demo-section">
+        <div class="demo-title">📋 核心总结：两种"脱离文档流"的区别</div>
+
+        <div class="compare-grid">
+            <div class="compare-card float-card">
+                <h3>🌊 float 浮动</h3>
+                <ul>
+                    <li>元素"飘"起来，但还在那挡着路</li>
+                    <li>后面的元素 <b>顶上来了（垂直方向）</b></li>
+                    <li>但被浮动元素 <b>挡住了（水平方向）</b></li>
+                    <li>效果是：环绕，不是覆盖</li>
+                    <li>应用：图文环绕、导航栏、多列布局</li>
+                </ul>
+            </div>
+
+            <div class="compare-card absolute-card">
+                <h3>📌 position: absolute</h3>
+                <ul>
+                    <li>元素"消失"了，完全不占空间</li>
+                    <li>后面的元素 <b>彻底顶上来</b></li>
+                    <li>可能会 <b>完全覆盖</b> 绝对定位元素</li>
+                    <li>效果是：层叠，可以互相覆盖</li>
+                    <li>应用：弹出框、下拉菜单、装饰元素</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="tip"
+            style="margin-top: 25px; background: linear-gradient(135deg, #fff9e6, #fff5cc); border-left-color: #f39c12;">
+            <b>💡 一句话记住：</b><br>
+            <b>float</b> = 我搬开椅子站起来了，但椅子还挡在那 → 你能坐到我原来的<b>位置上</b>，但<b>椅子挡着坐不舒服</b><br>
+            <b>absolute</b> = 我连椅子都搬走了 → 你直接<b>坐上来</b>，完全没障碍
+        </div>
+    </div>
+
+</body>
+
+</html>

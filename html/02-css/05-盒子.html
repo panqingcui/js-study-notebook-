@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS盒子模型示例</title>
+    <style>
+        /* 重置默认样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #333;
+        }
+
+        /* 盒子模型示意图容器 */
+        .box-model-demo {
+            max-width: 900px;
+            margin: 0 auto 60px;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #555;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+
+        /* 可视化盒子模型 */
+        .visual-box {
+            margin: 30px auto;
+            text-align: center;
+        }
+
+        /* margin区域 */
+        .margin-box {
+            display: inline-block;
+            background-color: #FFD700;
+            padding: 40px;
+            position: relative;
+        }
+
+        .margin-box::before {
+            content: 'margin（外边距）';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 12px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        /* border区域 */
+        .border-box {
+            background-color: #C0C0C0;
+            padding: 5px;
+            position: relative;
+        }
+
+        .border-box::before {
+            content: 'border（边框）';
+            position: absolute;
+            top: 2px;
+            left: 10px;
+            font-size: 12px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        /* padding区域 */
+        .padding-box {
+            background-color: #90EE90;
+            padding: 40px;
+            position: relative;
+        }
+
+        .padding-box::before {
+            content: 'padding（内边距）';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 12px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        /* content区域 */
+        .content-box {
+            background-color: #87CEEB;
+            padding: 40px;
+            color: #333;
+            font-weight: bold;
+            font-size: 18px;
+            position: relative;
+        }
+
+        .content-box::before {
+            content: 'content（内容）';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 12px;
+            color: #333;
+        }
+
+        /* 实际盒子示例 */
+        .example-section {
+            margin-top: 40px;
+        }
+
+        /* 示例1：标准盒子 */
+        .box-standard {
+            width: 300px;
+            height: 200px;
+            margin: 20px;
+            padding: 20px;
+            border: 5px solid #4CAF50;
+            background-color: #E8F5E9;
+            display: inline-block;
+            vertical-align: top;
+        }
+
+        /* 示例2：不同边距设置 */
+        .box-different-margins {
+            width: 300px;
+            height: 200px;
+            margin-top: 10px;
+            margin-right: 20px;
+            margin-bottom: 30px;
+            margin-left: 40px;
+            padding: 15px;
+            border: 3px dashed #FF5722;
+            background-color: #FFF3E0;
+            display: inline-block;
+            vertical-align: top;
+        }
+
+        /* 示例3：box-sizing: content-box（默认值） */
+        .box-content-box {
+            width: 200px;
+            height: 150px;
+            padding: 20px;
+            border: 5px solid #2196F3;
+            background-color: #E3F2FD;
+            box-sizing: content-box;
+            display: inline-block;
+            vertical-align: top;
+            margin: 20px;
+        }
+
+        /* 示例4：box-sizing: border-box */
+        .box-border-box {
+            width: 200px;
+            height: 150px;
+            padding: 20px;
+            border: 5px solid #9C27B0;
+            background-color: #F3E5F5;
+            box-sizing: border-box;
+            display: inline-block;
+            vertical-align: top;
+            margin: 20px;
+        }
+
+        /* 说明文字 */
+        .description {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-left: 4px solid #4CAF50;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .comparison {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .comparison-item {
+            text-align: center;
+            margin: 10px;
+        }
+
+        .label {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #666;
+        }
+
+        /* 尺寸标注 */
+        .size-info {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #FFF9C4;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        /* 过渡效果示例 */
+        .transition-demo {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .transition-box {
+            width: 150px;
+            height: 150px;
+            background-color: #4CAF50;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .transition-transform {
+            transition: transform 0.3s ease;
+            background: linear-gradient(45deg, #4CAF50, #FF5722)
+        }
+
+        .transition-transform:hover {
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        .transition-color {
+            transition: background-color 0.5s ease, border-radius 0.5s ease;
+        }
+
+        .transition-color:hover {
+            background-color: #FF5722;
+            border-radius: 50%;
+        }
+
+        .transition-all {
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .transition-all:hover {
+            transform: translateY(-20px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            background-color: #2196F3;
+        }
+
+        .transition-multi {
+            transition: width 0.3s ease, height 0.3s ease, background-color 0.5s ease, transform 0.3s ease;
+        }
+
+        .transition-multi:hover {
+            width: 200px;
+            height: 100px;
+            background-color: #9C27B0;
+            transform: rotate(-5deg);
+        }
+
+        /* 阴影效果示例 */
+        .shadow-demo {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .shadow-box {
+            width: 150px;
+            height: 150px;
+            background-color: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .shadow-basic {
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .shadow-multiple {
+            box-shadow:
+                0 2px 4px rgba(0, 0, 0, 0.1),
+                0 8px 16px rgba(0, 0, 0, 0.1),
+                0 16px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .shadow-colored {
+            box-shadow: 0 10px 20px rgba(255, 87, 34, 0.4);
+        }
+
+        .shadow-inset {
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .shadow-hover {
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .shadow-hover:hover {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .text-shadow {
+            font-size: 32px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        /* 背景图片示例 */
+        .background-demo {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .bg-box {
+            height: 200px;
+            border-radius: 10px;
+            padding: 20px;
+            color: white;
+            font-weight: bold;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .bg-cover {
+            background-image: url('https://picsum.photos/400/300?random=1');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .bg-contain {
+            background-image: url('https://picsum.photos/400/300?random=2');
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        .bg-fixed {
+            background-image: url('https://picsum.photos/400/300?random=3');
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .bg-multiple {
+            background-image:
+                url('https://picsum.photos/100/100?random=4'),
+                linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-size: 100px 100px, cover;
+            background-position: top right, center;
+            background-repeat: no-repeat, no-repeat;
+        }
+
+        /* 渐变色示例 */
+        .gradient-demo {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .gradient-box {
+            height: 150px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .gradient-linear {
+            background: linear-gradient(to right, #ff6b6b, #4ecdc4);
+        }
+
+        .gradient-linear-angle {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .gradient-radial {
+            background: radial-gradient(circle, #f093fb 0%, #f5576c 100%);
+        }
+
+        .gradient-conic {
+            background: conic-gradient(from 0deg, #ff6b6b, #4ecdc4, #45b7d1, #96e6a1, #ffd93d, #ff6b6b);
+        }
+
+        .gradient-multi-stop {
+            background: linear-gradient(to right, #ff6b6b, #ffd93d, #6bcf7f, #4ecdc4, #45b7d1);
+        }
+
+        .gradient-repeating {
+            background: repeating-linear-gradient(45deg,
+                    #606dbc,
+                    #606dbc 10px,
+                    #465298 10px,
+                    #465298 20px);
+        }
+
+        /* 渐变文字示例 */
+        .gradient-text-demo {
+            margin-top: 30px;
+        }
+
+        .gradient-text {
+            font-size: 48px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .gradient-text-animated {
+            font-size: 36px;
+            font-weight: bold;
+            background: linear-gradient(90deg,
+                    #ff6b6b,
+                    #ffd93d,
+                    #6bcf7f,
+                    #4ecdc4,
+                    #45b7d1,
+                    #ff6b6b);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            animation: gradient-shift 3s linear infinite;
+        }
+
+        @keyframes gradient-shift {
+            0% {
+                background-position: 0% center;
+            }
+
+            100% {
+                background-position: 200% center;
+            }
+        }
+
+        .gradient-text-multi {
+            font-size: 32px;
+            font-weight: bold;
+            background: radial-gradient(circle at 30% 50%, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        /* 其他常用属性示例 */
+        .common-props-demo {
+            margin-top: 20px;
+        }
+
+        .props-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .prop-card {
+            padding: 20px;
+            border-radius: 10px;
+            background-color: white;
+            transition: all 0.3s ease;
+        }
+
+        .prop-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .prop-card h4 {
+            margin-bottom: 10px;
+            color: #4CAF50;
+        }
+
+        .opacity-demo {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .opacity-box {
+            width: 50px;
+            height: 50px;
+            background-color: #4CAF50;
+            border-radius: 5px;
+        }
+
+        .cursor-demo {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .cursor-box {
+            padding: 10px 20px;
+            background-color: #e3f2fd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .cursor-pointer {
+            cursor: pointer;
+        }
+
+        .cursor-grab {
+            cursor: grab;
+        }
+
+        .cursor-wait {
+            cursor: wait;
+        }
+
+        .cursor-not-allowed {
+            cursor: not-allowed;
+        }
+
+        .cursor-zoom-in {
+            cursor: zoom-in;
+        }
+
+        .overflow-demo {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .overflow-box {
+            width: 200px;
+            height: 100px;
+            background-color: #f5f5f5;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        .overflow-hidden {
+            overflow: hidden;
+        }
+
+        .overflow-scroll {
+            overflow: scroll;
+        }
+
+        .overflow-auto {
+            overflow: auto;
+        }
+
+        .outline-demo {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .outline-box {
+            padding: 15px;
+            border: 2px solid #4CAF50;
+            border-radius: 5px;
+            outline: 3px dashed #FF5722;
+            outline-offset: 5px;
+        }
+
+        .object-fit-demo {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .object-fit-box {
+            height: 150px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #ddd;
+        }
+
+        .object-fit-box img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .object-fill img {
+            object-fit: fill;
+        }
+
+        .object-cover img {
+            object-fit: cover;
+        }
+
+        .object-contain img {
+            object-fit: contain;
+        }
+
+        .object-scale-down img {
+            object-fit: scale-down;
+        }
+
+        .filter-demo {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .filter-box {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .filter-blur {
+            filter: blur(2px);
+        }
+
+        .filter-brightness {
+            filter: brightness(1.5);
+        }
+
+        .filter-contrast {
+            filter: contrast(200%);
+        }
+
+        .filter-grayscale {
+            filter: grayscale(100%);
+        }
+
+        .filter-hue-rotate {
+            filter: hue-rotate(90deg);
+        }
+
+        .filter-invert {
+            filter: invert(100%);
+        }
+
+        .filter-saturate {
+            filter: saturate(300%);
+        }
+
+        .filter-sepia {
+            filter: sepia(100%);
+        }
+
+        .code-example {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            margin-top: 10px;
+            overflow-x: auto;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>CSS 盒子模型（Box Model）示例</h1>
+
+    <!-- 可视化盒子模型 -->
+    <div class="box-model-demo">
+        <h2>1. 盒子模型结构图</h2>
+        <p>每个HTML元素都可以看作一个盒子，由以下四部分组成：</p>
+
+        <div class="visual-box">
+            <!-- margin区域 -->
+            <div class="margin-box">
+                <!-- border区域 -->
+                <div class="border-box">
+                    <!-- padding区域 -->
+                    <div class="padding-box">
+                        <!-- content区域 -->
+                        <div class="content-box">
+                            内容区域<br>
+                            Content
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="description">
+            <strong>盒子模型从外到内：</strong><br>
+            <span style="color: #FFD700;">■</span> <strong>Margin（外边距）</strong>：盒子与其他元素之间的空间，透明<br>
+            <span style="color: #C0C0C0;">■</span> <strong>Border（边框）</strong>：围绕内边距和内容的边框<br>
+            <span style="color: #90EE90;">■</span> <strong>Padding（内边距）</strong>：内容与边框之间的空间，背景色会延伸到这里<br>
+            <span style="color: #87CEEB;">■</span> <strong>Content（内容）</strong>：盒子的实际内容区域
+        </div>
+    </div>
+
+    <!-- 实际盒子示例 -->
+    <div class="box-model-demo">
+        <h2>2. 不同边距设置的盒子</h2>
+
+        <div class="example-section">
+            <!-- 标准盒子 -->
+            <div class="box-standard">
+                <h3>标准盒子</h3>
+                <p>margin: 20px（四周相同）</p>
+                <p>padding: 20px</p>
+                <p>border: 5px</p>
+            </div>
+
+            <!-- 不同边距的盒子 -->
+            <div class="box-different-margins">
+                <h3>不同边距</h3>
+                <p>margin: 10px 20px 30px 40px</p>
+                <p>（上 右 下 左）</p>
+                <p>border: 3px dashed</p>
+            </div>
+        </div>
+
+        <div class="description">
+            <strong>margin 和 padding 的简写规则：</strong><br>
+            • 1个值：四周相同 margin: 20px<br>
+            • 2个值：上下 左右 margin: 10px 20px<br>
+            • 3个值：上 左右 下 margin: 10px 20px 30px<br>
+            • 4个值：上 右 下 左（顺时针） margin: 10px 20px 30px 40px
+        </div>
+    </div>
+
+    <!-- box-sizing 对比 -->
+    <div class="box-model-demo">
+        <h2>3. box-sizing 属性对比</h2>
+        <p>box-sizing 决定了 width 和 height 的计算方式：</p>
+
+        <div class="comparison">
+            <div class="comparison-item">
+                <div class="box-content-box">
+                    content-box
+                </div>
+                <div class="label">
+                    box-sizing: content-box（默认）<br>
+                    实际宽度 = width + padding + border<br>
+                    = 200 + 40 + 10 = 250px
+                </div>
+            </div>
+
+            <div class="comparison-item">
+                <div class="box-border-box">
+                    border-box
+                </div>
+                <div class="label">
+                    box-sizing: border-box（推荐）<br>
+                    实际宽度 = width（已包含padding和border）<br>
+                    = 200px
+                </div>
+            </div>
+        </div>
+
+        <div class="size-info">
+            <strong>尺寸计算示例：</strong><br>
+            设置：width: 200px; padding: 20px; border: 5px;<br><br>
+
+            <strong>content-box（默认值）：</strong><br>
+            • 内容宽度 = 200px<br>
+            • 实际总宽度 = 200 + 20×2 + 5×2 = 250px<br>
+            • 内容区域固定，padding和border会额外增加尺寸<br><br>
+
+            <strong>border-box（推荐）：</strong><br>
+            • 实际总宽度 = 200px（包含padding和border）<br>
+            • 内容宽度 = 200 - 20×2 - 5×2 = 150px<br>
+            • 更容易控制布局，现代开发推荐使用
+        </div>
+
+        <div class="description">
+            <strong>💡 最佳实践：</strong><br>
+            在项目开始时添加以下代码，让所有元素使用 border-box：<br>
+            <code>*, *::before, *::after { box-sizing: border-box; }</code>
+        </div>
+    </div>
+
+    <!-- 过渡效果示例 -->
+    <div class="box-model-demo">
+        <h2>4. 过渡效果（Transition）</h2>
+        <p>鼠标悬停在盒子上查看过渡动画效果：</p>
+
+        <div class="transition-demo">
+            <div class="transition-box transition-transform">
+                缩放+旋转
+            </div>
+            <div class="transition-box transition-color">
+                颜色+圆角
+            </div>
+            <div class="transition-box transition-all">
+                多属性动画
+            </div>
+            <div class="transition-box transition-multi">
+                独立控制
+            </div>
+        </div>
+
+        <div class="code-example">
+            /* 单个属性过渡 */<br>
+            transition: transform 0.3s ease;<br><br>
+            /* 多个属性过渡 */<br>
+            transition: width 0.3s, height 0.3s, background-color 0.5s;<br><br>
+            /* 所有属性过渡 */<br>
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);<br><br>
+            /* 缓动函数：ease | linear | ease-in | ease-out | ease-in-out | cubic-bezier() */
+        </div>
+    </div>
+
+    <!-- 阴影效果示例 -->
+    <div class="box-model-demo">
+        <h2>5. 阴影效果（Shadow）</h2>
+        <p>box-shadow 和 text-shadow 的各种用法：</p>
+
+        <div class="shadow-demo">
+            <div class="shadow-box shadow-basic">
+                基础阴影
+            </div>
+            <div class="shadow-box shadow-multiple">
+                多层阴影
+            </div>
+            <div class="shadow-box shadow-colored">
+                彩色阴影
+            </div>
+            <div class="shadow-box shadow-inset">
+                内阴影
+            </div>
+            <div class="shadow-box shadow-hover">
+                悬停阴影
+            </div>
+        </div>
+
+        <div class="text-shadow">
+            文字阴影效果 Text Shadow
+        </div>
+
+        <div class="code-example">
+            /* box-shadow: 水平偏移 垂直偏移 模糊半径 扩展半径 颜色 inset */<br>
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);<br>
+            box-shadow: 0 10px 20px rgba(255, 87, 34, 0.4);<br>
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);<br><br>
+            /* 多层阴影 */<br>
+            box-shadow:<br>
+            &nbsp;&nbsp;0 2px 4px rgba(0, 0, 0, 0.1),<br>
+            &nbsp;&nbsp;0 8px 16px rgba(0, 0, 0, 0.1),<br>
+            &nbsp;&nbsp;0 16px 32px rgba(0, 0, 0, 0.1);<br><br>
+            /* text-shadow: 水平偏移 垂直偏移 模糊半径 颜色 */<br>
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        </div>
+    </div>
+
+    <!-- 背景图片示例 -->
+    <div class="box-model-demo">
+        <h2>6. 背景图片（Background Image）</h2>
+        <p>background-image 的各种使用方式：</p>
+
+        <div class="background-demo">
+            <div class="bg-box bg-cover">
+                background-size: cover
+            </div>
+            <div class="bg-box bg-contain">
+                background-size: contain
+            </div>
+            <div class="bg-box bg-fixed">
+                background-attachment: fixed
+            </div>
+            <div class="bg-box bg-multiple">
+                多背景叠加
+            </div>
+        </div>
+
+        <div class="code-example">
+            /* 背景图片 */<br>
+            background-image: url('image.jpg');<br><br>
+            /* 背景尺寸 */<br>
+            background-size: cover; /* 覆盖整个容器，可能裁剪 */<br>
+            background-size: contain; /* 完整显示，可能留白 */<br><br>
+            /* 背景位置 */<br>
+            background-position: center;<br><br>
+            /* 背景重复 */<br>
+            background-repeat: no-repeat;<br><br>
+            /* 多背景叠加 */<br>
+            background-image:<br>
+            &nbsp;&nbsp;url('overlay.png'),<br>
+            &nbsp;&nbsp;linear-gradient(135deg, #667eea, #764ba2);
+        </div>
+    </div>
+
+    <!-- 渐变色示例 -->
+    <div class="box-model-demo">
+        <h2>7. 渐变色（Gradient）</h2>
+        <p>CSS 渐变可以用作背景、边框等：</p>
+
+        <div class="gradient-demo">
+            <div class="gradient-box gradient-linear">
+                线性渐变
+            </div>
+            <div class="gradient-box gradient-linear-angle">
+                角度渐变 135°
+            </div>
+            <div class="gradient-box gradient-radial">
+                径向渐变
+            </div>
+            <div class="gradient-box gradient-conic">
+                锥形渐变
+            </div>
+            <div class="gradient-box gradient-multi-stop">
+                多色渐变
+            </div>
+            <div class="gradient-box gradient-repeating">
+                重复渐变
+            </div>
+        </div>
+
+        <div class="code-example">
+            /* 线性渐变 */<br>
+            background: linear-gradient(to right, #ff6b6b, #4ecdc4);<br>
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);<br><br>
+            /* 径向渐变 */<br>
+            background: radial-gradient(circle, #f093fb 0%, #f5576c 100%);<br><br>
+            /* 锥形渐变 */<br>
+            background: conic-gradient(from 0deg, #ff6b6b, #4ecdc4, #45b7d1);<br><br>
+            /* 重复渐变 */<br>
+            background: repeating-linear-gradient(45deg, #606dbc, #606dbc 10px, #465298 10px, #465298 20px);
+        </div>
+    </div>
+
+    <!-- 渐变文字示例 -->
+    <div class="box-model-demo">
+        <h2>8. 渐变文字（Gradient Text）</h2>
+        <p>使用 background-clip: text 实现渐变文字效果：</p>
+
+        <div class="gradient-text-demo">
+            <div class="gradient-text">
+                线性渐变文字
+            </div>
+            <div class="gradient-text-animated">
+                动态渐变文字
+            </div>
+            <div class="gradient-text-multi">
+                径向渐变文字
+            </div>
+        </div>
+
+        <div class="code-example">
+            /* 渐变文字核心代码 */<br>
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);<br>
+            -webkit-background-clip: text;<br>
+            -webkit-text-fill-color: transparent;<br>
+            background-clip: text;<br><br>
+            /* 动态渐变文字 */<br>
+            background-size: 200% auto;<br>
+            animation: gradient-shift 3s linear infinite;<br><br>
+            @keyframes gradient-shift {<br>
+            &nbsp;&nbsp;0% { background-position: 0% center; }<br>
+            &nbsp;&nbsp;100% { background-position: 200% center; }<br>
+            }
+        </div>
+    </div>
+
+    <!-- 其他常用属性 -->
+    <div class="box-model-demo">
+        <h2>9. 其他常用CSS属性</h2>
+
+        <div class="common-props-demo">
+            <!-- 透明度 -->
+            <div class="prop-card">
+                <h4>透明度（Opacity）</h4>
+                <div class="opacity-demo">
+                    <div class="opacity-box" style="opacity: 1;"></div>
+                    <div class="opacity-box" style="opacity: 0.7;"></div>
+                    <div class="opacity-box" style="opacity: 0.4;"></div>
+                    <div class="opacity-box" style="opacity: 0.1;"></div>
+                </div>
+                <div class="code-example">
+                    opacity: 1; /* 完全不透明 */<br>
+                    opacity: 0.5; /* 半透明 */<br>
+                    opacity: 0; /* 完全透明 */
+                </div>
+            </div>
+
+            <!-- 鼠标指针 -->
+            <div class="prop-card">
+                <h4>鼠标指针（Cursor）</h4>
+                <div class="cursor-demo">
+                    <div class="cursor-box cursor-pointer">pointer</div>
+                    <div class="cursor-box cursor-grab">grab</div>
+                    <div class="cursor-box cursor-wait">wait</div>
+                    <div class="cursor-box cursor-not-allowed">not-allowed</div>
+                    <div class="cursor-box cursor-zoom-in">zoom-in</div>
+                </div>
+            </div>
+
+            <!-- 溢出处理 -->
+            <div class="prop-card">
+                <h4>溢出处理（Overflow）</h4>
+                <div class="overflow-demo">
+                    <div class="overflow-box overflow-hidden">
+                        overflow: hidden; 超出内容会被隐藏，不会显示滚动条。
+                    </div>
+                    <div class="overflow-box overflow-scroll">
+                        overflow: scroll; 总是显示滚动条，无论内容是否溢出。
+                    </div>
+                    <div class="overflow-box overflow-auto">
+                        overflow: auto; 只在内容溢出时显示滚动条（推荐）。
+                    </div>
+                </div>
+            </div>
+
+            <!-- 轮廓线 -->
+            <div class="prop-card">
+                <h4>轮廓线（Outline）</h4>
+                <div class="outline-demo">
+                    <div class="outline-box">
+                        outline 不占用空间<br>
+                        outline-offset: 5px
+                    </div>
+                </div>
+                <div class="code-example">
+                    outline: 3px dashed #FF5722;<br>
+                    outline-offset: 5px;
+                </div>
+            </div>
+
+            <!-- 对象适配 -->
+            <div class="prop-card">
+                <h4>对象适配（Object-fit）</h4>
+                <div class="object-fit-demo">
+                    <div class="object-fit-box object-fill">
+                        <img src="https://picsum.photos/200/100?random=5" alt="fill">
+                        <div style="text-align: center; padding: 5px; font-size: 12px;">fill</div>
+                    </div>
+                    <div class="object-fit-box object-cover">
+                        <img src="https://picsum.photos/200/100?random=5" alt="cover">
+                        <div style="text-align: center; padding: 5px; font-size: 12px;">cover</div>
+                    </div>
+                    <div class="object-fit-box object-contain">
+                        <img src="https://picsum.photos/200/100?random=5" alt="contain">
+                        <div style="text-align: center; padding: 5px; font-size: 12px;">contain</div>
+                    </div>
+                    <div class="object-fit-box object-scale-down">
+                        <img src="https://picsum.photos/200/100?random=5" alt="scale-down">
+                        <div style="text-align: center; padding: 5px; font-size: 12px;">scale-down</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 滤镜效果 -->
+            <div class="prop-card">
+                <h4>滤镜效果（Filter）</h4>
+                <div class="filter-demo">
+                    <div class="filter-box">原始</div>
+                    <div class="filter-box filter-blur">blur</div>
+                    <div class="filter-box filter-brightness">brightness</div>
+                    <div class="filter-box filter-contrast">contrast</div>
+                    <div class="filter-box filter-grayscale">grayscale</div>
+                    <div class="filter-box filter-hue-rotate">hue-rotate</div>
+                    <div class="filter-box filter-invert">invert</div>
+                    <div class="filter-box filter-saturate">saturate</div>
+                    <div class="filter-box filter-sepia">sepia</div>
+                </div>
+                <div class="code-example">
+                    filter: blur(2px);<br>
+                    filter: brightness(1.5);<br>
+                    filter: contrast(200%);<br>
+                    filter: grayscale(100%);<br>
+                    filter: hue-rotate(90deg);<br>
+                    filter: invert(100%);<br>
+                    filter: saturate(300%);<br>
+                    filter: sepia(100%);
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

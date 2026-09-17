@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2D & 3D 变换动画</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+
+        /* ========== 页头 ========== */
+        .page-header {
+            text-align: center;
+            color: #fff;
+            margin-bottom: 40px;
+        }
+
+        .page-header h1 {
+            font-size: 2.4em;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
+            margin-bottom: 10px;
+        }
+
+        .page-header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(520px, 1fr));
+            gap: 25px;
+        }
+
+        h1 {
+            color: #fff;
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 12px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        body>p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1em;
+            line-height: 1.7;
+            margin-bottom: 8px;
+            max-width: 720px;
+        }
+
+        /* 知识点说明文字 */
+        .explanation {
+            font-size: 0.92em;
+            color: #555;
+            margin-bottom: 14px;
+            line-height: 1.65;
+        }
+
+        /* 说明文字中的行内代码标签 */
+        .explanation code {
+            background: #eef2ff;
+            color: #4338ca;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+        }
+
+        /* 卡片标题栏 */
+        .card-title {
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            color: #fff;
+            padding: 16px 22px;
+            font-size: 1.15em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* 标题前的圆形编号 */
+        .card-title .num {
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85em;
+        }
+
+        /* 卡片内容区 */
+        .card-body {
+            padding: 20px 22px 22px;
+        }
+
+        /* 每个知识点的可视化演示容器，虚线边框方便识别 */
+        .demo-area {
+            border: 2px dashed #c7d2fe;
+            border-radius: 10px;
+            padding: 15px;
+            background: #fafbff;
+            min-height: 180px;
+            position: relative;
+        }
+
+        .grid-box {
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            color: #fff;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1em;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+            transition: all 1s ease;
+        }
+
+        /* 按钮组容器，flex 布局自动换行 */
+        .controls {
+            margin-top: 14px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        /* 切换按钮 */
+        .controls button {
+            padding: 7px 14px;
+            border: none;
+            background: #e0e7ff;
+            color: #3730a3;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.2s;
+        }
+
+        .controls button:hover {
+            background: #c7d2fe;
+        }
+
+        /* 当前选中的按钮高亮样式 */
+        .controls button.active {
+            background: #4f46e5;
+            color: #fff;
+        }
+
+        /* ========== 3D变换相关样式 ========== */
+
+        /* 透视容器：给父元素设置 perspective 子元素才有真正的3D效果 */
+        .perspective-container {
+            perspective: 600px;
+            perspective-origin: 50% 50%;
+        }
+
+        /* 立方体容器：preserve-3d 让子元素保留在3D空间中 */
+        .cube {
+            width: 100px;
+            height: 100px;
+            position: relative;
+            transform-style: preserve-3d;
+            margin: 20px auto;
+        }
+
+        .cube-face {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #fff;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+        }
+
+        /* 翻转卡片 */
+        .flip-card {
+            width: 120px;
+            height: 120px;
+            position: relative;
+            transform-style: preserve-3d;
+            margin: 20px auto;
+        }
+
+        .flip-front,
+        .flip-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2em;
+            color: #fff;
+            backface-visibility: hidden;
+        }
+
+        .flip-back {
+            transform: rotateY(180deg);
+        }
+
+        /* translateZ 深度演示容器 */
+        .depth-scene {
+            perspective: 800px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .depth-box {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            color: #fff;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.6s ease;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-header">
+        <h1>🎨 2D & 3D 变换动画</h1>
+        <p>交互式学习</p>
+    </div>
+    <p>2D变换：在平面上的平移、缩放、旋转、倾斜四大基础操作。</p>
+    <p>3D变换：通过 <code>perspective</code> 透视 + <code>rotateX/Y/Z</code>、<code>translateZ</code> 等函数实现空间立体效果。</p>
+    <p></p>
+    <div class="container" id="container">
+        <div class="card">
+            <div class="card-title">
+                <span class="num">1</span> 平移translate(x, y)
+            </div>
+            <p class="explanation">x轴平移100px,y轴平移100px,也可以设置%,例如translate(50%, 50%)</p>
+            <div class="card-body">
+                <div class="demo-area">
+                    <div class="grid-box transform-target" style="background:#8b5cf6">A</div>
+                    <div class="grid-box" style="background:#ec4899">B</div>
+                </div>
+                <div class="controls">
+                    <button data-transform="translate(10px, 0)" class="active">x轴平移10px</button>
+                    <button data-transform="translate(0, 20px)">y轴平移20px</button>
+                    <button data-transform="translate(50%, 50%)">x,y轴平移50%</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">
+                <span class="num">2</span> 缩放scale(x, y)
+            </div>
+            <p class="explanation">
+                <code>scale(2)</code> 整体放大2倍，<code>scale(2, 1.5)</code> 分别缩放x/y轴，
+                <code>scaleX()</code>/<code>scaleY()</code> 单独控制某一轴
+            </p>
+            <div class="card-body">
+                <div class="demo-area">
+                    <div class="grid-box transform-target" style="background:#f59e0b">A</div>
+                    <div class="grid-box" style="background:#ef4444">B</div>
+                </div>
+                <div class="controls">
+                    <button data-transform="scale(1)" class="active">原始大小</button>
+                    <button data-transform="scale(1.5, 1)">x轴放大1.5倍</button>
+                    <button data-transform="scale(1, 1.5)">y轴放大1.5倍</button>
+                    <button data-transform="scale(0.5, 0.5)">整体缩小一半</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">
+                <span class="num">3</span> 旋转rotate(angle)
+            </div>
+            <p class="explanation">
+                <code>rotate(45deg)</code> 顺时针旋转45度，正值顺时针，负值逆时针，
+                <code>rotateX()</code>/<code>rotateY()</code> 可实现3D翻转效果
+            </p>
+            <div class="card-body">
+                <div class="demo-area">
+                    <div class="grid-box transform-target" style="background:#10b981">A</div>
+                    <div class="grid-box" style="background:#06b6d4">B</div>
+                </div>
+                <div class="controls">
+                    <button data-transform="rotate(0deg)" class="active">不旋转</button>
+                    <button data-transform="rotate(45deg)">顺时针旋转45°</button>
+                    <button data-transform="rotate(90deg)">顺时针旋转90°</button>
+                    <button data-transform="rotate(-30deg)">逆时针旋转30°</button>
+                    <button data-transform="rotate(180deg)">翻转180°</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">
+                <span class="num">4</span> 倾斜skew(xAngle, yAngle)
+            </div>
+            <p class="explanation">
+                <code>skew(20deg, 10deg)</code> x轴倾斜20度，y轴倾斜10度，
+                <code>skewX()</code>/<code>skewY()</code> 单独倾斜某一轴
+            </p>
+            <div class="card-body">
+                <div class="demo-area">
+                    <div class="grid-box" style="background:#6366f1">A</div>
+                    <div class="grid-box" style="background:#8b5cf6">B</div>
+                </div>
+                <div class="controls">
+                    <button data-transform="skew(0deg, 0deg)" class="active">不倾斜</button>
+                    <button data-transform="skewX(20deg)">x轴倾斜20°</button>
+                    <button data-transform="skewY(15deg)">y轴倾斜15°</button>
+                    <button data-transform="skew(20deg, 10deg)">x轴20° y轴10°</button>
+                    <button data-transform="skew(-15deg, -10deg)">x轴-15° y轴-10°</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script>
+        document.querySelectorAll('.card').forEach(card => {
+            const demoTarget = card.querySelector('.demo-area .grid-box:first-child');
+            const buttons = card.querySelectorAll('.controls button');
+
+            buttons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    demoTarget.style.transform = btn.dataset.transform;
+
+                    buttons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                });
+            });
+        });
+    </script>
+
+</body>
+
+</html>
