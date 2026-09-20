@@ -1,0 +1,215 @@
+ /* 定义全局变量 */
+ :root {
+     --vivo-blue: #1976d2;
+     --vivo-cyan: #00e5ff;
+     --vivo-purple: #7b1fa2;
+     --vivo-dark: #121212;
+     --vivo-card-bg: #1e1e1e;
+     --neon-glow: 0 0 10px rgba(0, 229, 255, 0.7),
+         0 0 20px rgba(0, 229, 255, 0.5),
+         0 0 30px rgba(0, 229, 255, 0.3);
+ }
+
+ body {
+     font-family: 'Montserrat', sans-serif;
+     background-color: var(--vivo-dark);
+     color: #fff;
+     overflow-x: hidden;
+ }
+
+ /* 导航栏制作 */
+ .navbar {
+     background-color: rgba(18, 18, 18, 0.6) !important;
+     /* 导航栏模糊效果 */
+     backdrop-filter: blur(10px);
+     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+     padding: 15px 0;
+ }
+
+ .icons a {
+     font-size: 1.4rem;
+     color: rgba(255, 255, 255, 0.9);
+     padding: 0 10px;
+ }
+
+ .icons a:hover {
+     color: var(--vivo-cyan);
+     text-shadow: var(--neon-glow);
+ }
+
+ .nav-link {
+     position: relative;
+     color: rgba(255, 255, 255, 0.9);
+     margin: 0 12px;
+ }
+
+ /* 导航栏链接悬停时文字阴影 */
+ .nav-link:hover {
+     /* 文字阴影 */
+     text-shadow: var(--neon-glow);
+ }
+
+ /* 导航栏链接下划线效果 */
+ .nav-link::after {
+     content: '';
+     position: absolute;
+     left: 0;
+     bottom: -5px;
+     width: 0;
+     height: 2px;
+     background: linear-gradient(90deg, var(--vivo-cyan), var(--vivo-blue));
+     transition: all .3s;
+ }
+
+ /* 导航栏链接悬停时下划线宽度 */
+ .nav-link:hover::after {
+     width: 100%;
+ }
+
+ /* 导航栏品牌悬停时文字阴影 */
+ .navbar-brand,
+ .navbar-brand:hover {
+     font-size: 28px;
+     font-weight: 700;
+     background: linear-gradient(45deg, var(--vivo-cyan), var(--vivo-blue));
+     /* 文字裁剪 */
+     -webkit-background-clip: text;
+     background-clip: text;
+     /* 文字透明 */
+     color: transparent;
+     text-shadow: var(--neon-glow);
+ }
+
+ /* 轮播图模块 */
+ .banner {
+     width: 100%;
+     height: 50vw;
+     /* background-color: pink; */
+     /* 轮播图遮罩效果 */
+     mask-image: linear-gradient(rgb(0, 0, 0) 80%, rgba(0, 0, 0, 0) 100%);
+     -webkit-mask-image: linear-gradient(rgb(0, 0, 0) 80%, rgba(0, 0, 0, 0) 100%);
+ }
+
+ .banner .carousel-item img {
+     width: 100%;
+     height: 50vw;
+ }
+
+ .carousel-caption {
+     bottom: 15rem;
+ }
+
+ .carousel-indicators {
+     margin-bottom: 14rem;
+ }
+
+ .hot-product .info {
+     color: rgba(255, 255, 255, 0.7);
+ }
+
+ /* 热门商品模块 */
+ /* 卡片模块 */
+ .card {
+     overflow: hidden;
+     background-color: var(--vivo-card-bg);
+     border-radius: 15px;
+     border: 1px solid rgba(255, 255, 255, 0.1);
+     transition: all 0.3s;
+ }
+
+ .card:hover {
+     transform: translateY(-10px);
+     border-color: rgba(0, 229, 255, 0.3);
+ }
+
+ .card .card-img {
+     padding: 30px;
+     background-color: #292929;
+ }
+
+ .card .card-img img {
+     animation: move 5s ease-in-out infinite;
+ }
+
+ @keyframes move {
+     0% {
+         transform: translateY(0);
+     }
+
+     50% {
+         transform: translateY(-15px);
+     }
+
+     100% {
+         transform: translateY(0);
+     }
+ }
+
+ .card-title {
+     font-size: 1.4rem;
+     color: #fff;
+     font-weight: 600;
+ }
+
+ .card-text {
+     font-size: 0.9rem;
+     color: rgba(255, 255, 255, 0.7);
+ }
+
+ .price {
+     font-size: 1.5rem;
+     color: var(--vivo-cyan);
+     font-weight: 600;
+ }
+
+ .card-body .btn {
+     width: 100%;
+     border: 2px solid var(--vivo-cyan);
+     border-radius: 30px;
+     background: none;
+     padding: 10px 0;
+     color: var(--vivo-cyan);
+     font-weight: 600;
+ }
+
+ .card-body .btn:hover {
+     box-shadow: var(--neon-glow);
+ }
+
+ /* 未来科技模块 */
+ .future-tech {
+     position: relative;
+     background: url(../img/bg1.avif) no-repeat;
+     background-position: center;
+     background-size: cover;
+     /* 背景图片固定定位 */
+     background-attachment: fixed;
+ }
+
+ .future-tech::before {
+     position: absolute;
+     left: 0;
+     top: 0;
+     content: '';
+     width: 100%;
+     height: 100%;
+     background: rgba(18, 18, 18, 0.9);
+ }
+
+ .future-icon {
+     font-size: 3rem;
+     color: var(--vivo-cyan);
+     text-shadow: var(--neon-glow);
+     margin-bottom: 20px;
+ }
+
+ .future-title {
+     font-size: 1.5rem;
+     font-weight: 600;
+     margin-bottom: 15px;
+     color: #fff;
+ }
+
+ .future-desc {
+     color: rgba(255, 255, 255, 0.7);
+ }

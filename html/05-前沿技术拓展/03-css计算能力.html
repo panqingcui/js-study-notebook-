@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>css计算能力</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 定义 gap 变量 */
+        :root {
+            --gap: 20px;
+        }
+
+        .container {
+            width: 1000px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: var(--gap);
+            border: 1px solid #000;
+            /* 居中 */
+            margin: 0 auto;
+        }
+
+        .item {
+            /* 计算宽度，减去 gap */
+            width: calc(33.33333% - var(--gap));
+            height: 100px;
+            background-color: pink;
+            text-align: center;
+            line-height: 100px;
+            color: #000;
+            font-size: 20px;
+            border: 1px solid #000;
+        }
+
+        .item:nth-child(2n) {
+            background-color: aquamarine;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="item">1</div>
+        <div class="item">2</div>
+        <div class="item">3</div>
+        <div class="item">4</div>
+        <div class="item">5</div>
+        <div class="item">6</div>
+    </div>
+</body>
+
+</html>

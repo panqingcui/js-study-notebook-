@@ -1,0 +1,18 @@
+{
+    "mcpServers": {
+        "mcp_server_mysql": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@benborla29/mcp-server-mysql"
+            ],
+            "env": {
+                "MYSQL_HOST": "mysql6.sqlpub.com",
+                "MYSQL_PORT": "3311",
+                "MYSQL_USER": "python_test",
+                "MYSQL_PASS": "ik70kh7vRif1g6fA",
+                "MYSQL_DB": "pan_python_test"
+            }
+        }
+    }
+}

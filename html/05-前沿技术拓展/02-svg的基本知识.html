@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVG 常用知识点</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            background: #f5f5f5;
+            padding: 40px;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 40px;
+        }
+
+        .section {
+            background: #fff;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .section h2 {
+            color: #3498db;
+            border-left: 5px solid #3498db;
+            padding-left: 15px;
+            margin-bottom: 20px;
+        }
+
+        .section h3 {
+            color: #2c3e50;
+            margin: 20px 0 10px;
+        }
+
+        svg.demo {
+            display: block;
+            margin: 15px auto;
+            background: #fafafa;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+        }
+
+        code {
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: Consolas, monospace;
+            color: #e74c3c;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>SVG 常用知识点</h1>
+    <p class="subtitle">Scalable Vector Graphics — 可缩放矢量图形</p>
+
+    <!-- ==================== 第 1 节：基本形状 ==================== -->
+    <div class="section">
+        <h2>1. 基本形状</h2>
+
+        <h3>矩形 &lt;rect&gt;</h3>
+        <svg class="demo" width="300" height="120">
+            <!-- x,y: 左上角坐标; width,height: 宽高; rx,ry: 圆角半径 -->
+            <rect x="20" y="20" width="80" height="60" fill="#3498db" />
+            <rect x="120" y="20" width="80" height="60" rx="10" ry="10" fill="#e74c3c" />
+            <rect x="220" y="20" width="60" height="60" rx="30" ry="30" fill="#2ecc71" />
+        </svg>
+
+        <h3>圆形 &lt;circle&gt; 和椭圆 &lt;ellipse&gt;</h3>
+        <svg class="demo" width="300" height="120">
+            <!-- cx,cy: 圆心; r: 半径 -->
+            <circle cx="70" cy="60" r="40" fill="#f39c12" />
+            <!-- cx,cy: 中心; rx,ry: 水平/垂直半径 -->
+            <ellipse cx="180" cy="60" rx="60" ry="35" fill="#9b59b6" />
+            <ellipse cx="260" cy="60" rx="30" ry="50" fill="#1abc9c" />
+        </svg>
+
+        <h3>直线 &lt;line&gt;</h3>
+        <svg class="demo" width="300" height="100">
+            <!-- x1,y1: 起点; x2,y2: 终点 -->
+            <line x1="20" y1="20" x2="280" y2="80" stroke="#333" stroke-width="3" />
+            <line x1="20" y1="80" x2="280" y2="20" stroke="#e74c3c" stroke-width="2" />
+        </svg>
+
+        <h3>折线 &lt;polyline&gt;</h3>
+        <svg class="demo" width="300" height="120">
+            <!-- points: 用空格分隔的坐标点列表，不自动闭合 -->
+            <polyline points="20,80 60,40 100,60 140,20 180,50 220,30 260,70" fill="none" stroke="#3498db"
+                stroke-width="2" />
+        </svg>
+
+        <h3>多边形 &lt;polygon&gt;</h3>
+        <svg class="demo" width="300" height="120">
+            <!-- points: 与 polyline 类似，但会自动闭合路径 -->
+            <polygon points="60,20 100,90 20,90" fill="#f1c40f" stroke="#333" stroke-width="1" />
+            <polygon points="180,20 210,70 260,70 220,100 240,150 180,120 120,150 140,100 100,70 150,70"
+                fill="#e67e22" />
+        </svg>
+    </div>
+
+    <!-- ==================== 第 2 节：路径 path ==================== -->
+    <div class="section">
+        <h2>2. 路径 &lt;path&gt; — 最强大的元素</h2>
+        <p><code>path</code> 通过 <code>d</code> 属性定义复杂曲线，核心命令如下：</p>
+
+        <h3>直线命令</h3>
+        <svg class="demo" width="300" height="100">
+            <!-- M: 移动到 (moveTo); L: 画线到 (lineTo); H: 水平画; V: 垂直画; Z: 闭合 -->
+            <path d="M 20 20 L 100 20 L 100 80 L 20 80 Z" fill="#3498db" />
+            <!-- 小写字母表示相对坐标（相对于上一个点） -->
+            <path d="M 160 20 l 80 0 l 0 60 l -80 0 z" fill="#e74c3c" />
+        </svg>
+
+        <h3>贝塞尔曲线</h3>
+        <svg class="demo" width="300" height="150">
+            <!-- Q: 二次贝塞尔 (控制点, 终点) -->
+            <path d="M 20 100 Q 80 10 140 100" fill="none" stroke="#3498db" stroke-width="3" />
+            <!-- C: 三次贝塞尔 (控制点1, 控制点2, 终点) -->
+            <path d="M 160 100 C 180 20, 260 20, 280 100" fill="none" stroke="#e74c3c" stroke-width="3" />
+        </svg>
+
+        <h3>圆弧命令 A</h3>
+        <svg class="demo" width="300" height="150">
+            <!-- A rx ry x-rotation large-arc sweep x y -->
+            <path d="M 20 120 A 60 60 0 0 1 280 120" fill="none" stroke="#2ecc71" stroke-width="3" />
+            <path d="M 20 120 A 60 60 0 1 1 280 120" fill="none" stroke="#e67e22" stroke-width="3"
+                stroke-dasharray="5,5" />
+        </svg>
+    </div>
+
+    <!-- ==================== 第 3 节：描边与填充 ==================== -->
+    <div class="section">
+        <h2>3. 描边 (stroke) 与填充 (fill)</h2>
+
+        <svg class="demo" width="300" height="160">
+            <!-- fill: 填充颜色 -->
+            <circle cx="60" cy="50" r="30" fill="#3498db" />
+            <!-- stroke: 描边颜色; stroke-width: 描边宽度 -->
+            <rect x="120" y="20" width="80" height="60" fill="#fff" stroke="#e74c3c" stroke-width="4" />
+            <!-- stroke-linecap: 线帽样式 (butt/round/square) -->
+            <line x1="20" y1="120" x2="100" y2="120" stroke="#333" stroke-width="10" stroke-linecap="butt" />
+            <line x1="20" y1="140" x2="100" y2="140" stroke="#333" stroke-width="10" stroke-linecap="round" />
+            <!-- stroke-dasharray: 虚线 [实长, 虚长, ...] -->
+            <line x1="140" y1="130" x2="280" y2="130" stroke="#333" stroke-width="4" stroke-dasharray="8,4" />
+        </svg>
+
+        <p>常用属性：<code>fill</code>, <code>stroke</code>, <code>stroke-width</code>, <code>stroke-dasharray</code>,
+            <code>stroke-linecap</code>, <code>stroke-linejoin</code>, <code>fill-opacity</code>,
+            <code>stroke-opacity</code></p>
+    </div>
+
+    <!-- ==================== 第 4 节：文本 ==================== -->
+    <div class="section">
+        <h2>4. 文本 &lt;text&gt;</h2>
+
+        <svg class="demo" width="400" height="120">
+            <!-- x,y: 文本锚点位置; 默认是文字左下角基线 -->
+            <text x="20" y="40" font-size="20" fill="#3498db">Hello SVG!</text>
+            <!-- text-anchor: 对齐方式 (start/middle/end) -->
+            <text x="200" y="40" font-size="18" fill="#e74c3c" text-anchor="middle">居中对齐</text>
+            <!-- 使用 tspan 分段 -->
+            <text x="20" y="90" font-size="16" fill="#2c3e50">
+                这是 <tspan fill="#e67e22" font-weight="bold">tspan</tspan> 的用法
+            </text>
+        </svg>
+    </div>
+
+    <!-- ==================== 第 5 节：分组与复用 ==================== -->
+    <div class="section">
+        <h2>5. 分组 &lt;g&gt; 与复用 &lt;use&gt;</h2>
+
+        <svg class="demo" width="300" height="120">
+            <!-- g: 分组，可以整体设置属性 -->
+            <g fill="#3498db" stroke="#2c3e50" stroke-width="2">
+                <circle cx="40" cy="40" r="25" />
+                <rect x="90" y="15" width="50" height="50" />
+            </g>
+
+            <!-- defs: 定义可复用但不直接渲染的元素 -->
+            <defs>
+                <symbol id="star" viewBox="0 0 100 100">
+                    <polygon points="50,5 61,40 98,40 68,62 79,97 50,75 21,97 32,62 2,40 39,40" fill="#f1c40f"
+                        stroke="#333" stroke-width="2" />
+                </symbol>
+            </defs>
+            <!-- use: 引用定义的元素，xlink:href 或 href 指向 id -->
+            <use href="#star" x="180" y="10" width="40" height="40" />
+            <use href="#star" x="225" y="30" width="35" height="35" />
+            <use href="#star" x="180" y="55" width="30" height="30" />
+        </svg>
+    </div>
+
+    <!-- ==================== 第 6 节：变换 ==================== -->
+    <div class="section">
+        <h2>6. 变换 transform</h2>
+
+        <svg class="demo" width="300" height="200">
+            <!-- 平移 translate(x y) -->
+            <rect x="10" y="10" width="60" height="40" fill="#ddd" />
+            <rect x="10" y="10" width="60" height="40" fill="#3498db" transform="translate(80, 0)" />
+
+            <!-- 旋转 rotate(angle cx cy)  cx,cy 可选，默认原点 -->
+            <rect x="10" y="80" width="60" height="40" fill="#ddd" />
+            <rect x="10" y="80" width="60" height="40" fill="#e74c3c" transform="rotate(30 40 100)" />
+
+            <!-- 缩放 scale(sx sy) sy 可省略 -->
+            <circle cx="150" cy="100" r="30" fill="#ddd" />
+            <circle cx="150" cy="100" r="30" fill="#2ecc71" transform="scale(0.5)" />
+            <!-- 注意：缩放坐标原点是 (0,0)，通常配合 translate 使用 -->
+            <rect x="230" y="80" width="50" height="40" fill="#ddd" />
+            <rect x="230" y="80" width="50" height="40" fill="#9b59b6"
+                transform="translate(255 100) scale(0.6) translate(-255 -100)" />
+        </svg>
+    </div>
+
+    <!-- ==================== 第 7 节：viewBox 与坐标系统 ==================== -->
+    <div class="section">
+        <h2>7. viewBox 与坐标系统</h2>
+        <p><code>viewBox</code> 定义视口范围，格式为 <code>"minX minY width height"</code>。</p>
+
+        <svg class="demo" width="300" height="150" viewBox="0 0 150 75">
+            <!-- SVG 显示区域 300x150，但内部坐标系是 150x75，自动等比缩放 -->
+            <rect x="10" y="10" width="130" height="55" fill="#3498db" />
+            <circle cx="75" cy="37.5" r="20" fill="#fff" stroke="#e74c3c" stroke-width="3" />
+        </svg>
+    </div>
+
+    <!-- ==================== 第 8 节：渐变与图案 ==================== -->
+    <div class="section">
+        <h2>8. 渐变 &lt;linearGradient&gt; / &lt;radialGradient&gt;</h2>
+
+        <svg class="demo" width="300" height="150">
+            <defs>
+                <!-- 线性渐变: x1,y1 起点; x2,y2 终点，百分比表示相对位置 -->
+                <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#3498db" />
+                    <stop offset="100%" stop-color="#e74c3c" />
+                </linearGradient>
+                <!-- 径向渐变 -->
+                <radialGradient id="grad2" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#f1c40f" />
+                    <stop offset="100%" stop-color="#e67e22" />
+                </radialGradient>
+            </defs>
+            <rect x="20" y="20" width="100" height="100" fill="url(#grad1)" />
+            <circle cx="220" cy="70" r="50" fill="url(#grad2)" />
+        </svg>
+    </div>
+
+    <!-- ==================== 第 9 节：滤镜 ==================== -->
+    <div class="section">
+        <h2>9. 滤镜 filter</h2>
+
+        <svg class="demo" width="300" height="150">
+            <defs>
+                <!-- 高斯模糊 feGaussianBlur -->
+                <filter id="blur1">
+                    <feGaussianBlur stdDeviation="4" />
+                </filter>
+                <!-- 投影 feDropShadow -->
+                <filter id="shadow1">
+                    <feDropShadow dx="3" dy="3" stdDeviation="3" flood-color="#333" flood-opacity="0.4" />
+                </filter>
+            </defs>
+            <circle cx="70" cy="75" r="40" fill="#3498db" filter="url(#blur1)" />
+            <rect x="160" y="35" width="100" height="80" fill="#e74c3c" filter="url(#shadow1)" />
+        </svg>
+    </div>
+
+    <!-- ==================== 第 10 节：常用技巧 ==================== -->
+    <div class="section">
+        <h2>10. 实用技巧</h2>
+
+        <h3>10.1 响应式 SVG</h3>
+        <p>不设置固定宽高，或用 <code>width="100%"</code> + <code>preserveAspectRatio</code> 控制缩放方式。</p>
+
+        <h3>10.2 CSS 控制颜色</h3>
+        <p>给 SVG 元素设置 <code>fill="currentColor"</code>，即可通过 CSS <code>color</code> 属性统一控制颜色。</p>
+
+        <h3>10.3 SVG 事件</h3>
+        <p>SVG 元素可以像 HTML 元素一样绑定 <code>click</code>、<code>mouseover</code> 等事件。</p>
+
+        <h3>10.4 data URI 方式使用 SVG</h3>
+        <pre
+            style="background:#f0f0f0;padding:10px;border-radius:4px;overflow-x:auto;"><code>background-image: url("data:image/svg+xml;utf8,&lt;svg xmlns='http://www.w3.org/2000/svg' width='20' height='20'&gt;&lt;path d='...'/&gt;&lt;/svg&gt;");</code></pre>
+    </div>
+
+</body>
+
+</html>
