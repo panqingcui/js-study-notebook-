@@ -1,32 +1,48 @@
 <template>
   <div class="person">
-    <h2>姓名：{{ name }}</h2>
-    <h2>年龄：{{ age }}</h2>
-    <button @click="changeName">修改名字</button>
-    <button @click="changeAge">年龄+1</button>
-    <button @click="showTel">点我查看联系方式</button>
+    <div class="person">
+      姓：<input type="text" v-model="firstName" /> <br />
+      名：<input type="text" v-model="lastName" /> <br />
+      全名：<span>{{ fullName }}</span> <br />
+      <button @click="changeFullName">全名改为：li-si</button>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-// 引入ref函数，用于定义响应式数据
-import { ref } from 'vue'
+// 使用reactive定义响应式数据
+import { ref, computed } from 'vue' //引入computed
 
-// 定义响应式数据，简单类型用ref
-const name = ref('张三')
-const age = ref(18)
-const tel = ref('13888888888')
+let firstName = ref('zhang')
+let lastName = ref('san')
+// 计算属性——既读取又修改
+// 计算属性的值是根据依赖的响应式数据变化而变化的
+let fullName = computed({
+  // 读取
+  get() {
+    return firstName!.value + '-' + lastName!.value
+  },
+  // 修改
+  set(val) {
+    console.log('有人修改了fullName', val)
+    firstName.value = val.split('-')[0] ?? ''
+    lastName.value = val.split('-')[1] ?? ''
+    //第二种写法
+    //const [str1,str2] = val.split('-')
+    //firstName.value = str1
+    //lastName.value = str2
+  },
+})
 
-// 方法直接定义，模板可以直接使用，不需要挂载
-const changeName = () => {
-  name.value = 'zhang-san'
-}
-const changeAge = () => {
-  age.value += 1
-}
-const showTel = () => {
-  alert(tel.value)
+function changeFullName() {
+  fullName.value = 'li-si' //引起set的val变化
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.person {
+  margin: 20px;
+  background-color: #f0f0f0;
+  padding: 20px;
+}
+</style>
