@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>析构赋值</h1>
+    <p>析构赋值是一种从对象或数组中提取数据的语法。</p>
+    <p>对象的析构赋值：</p>
+    <script>
+        const obj = {
+            name: '张三',
+            age: 18
+        }
+        const { name, age } = obj
+        console.log(name, age)
+
+        console.log('-----------------数组的析构赋值-----------------')
+        const arr = [1, 2, 3, 4, 5]
+        const [a, b, c] = arr
+        console.log(a, b, c)
+
+        console.log('-----------------函数参数的析构赋值，剩余参数-----------------')
+        function add(...args) {
+            return args.reduce((pre, cur) => {
+                return pre + cur
+            }, 0)
+        }
+        const res = add(1, 2, 3)
+        console.log(res)
+        console.log('-----------------数组对象的析构赋值    -----------------')
+        const arr1 = [{
+            name: '张三',
+            age: 18
+        }]
+        const [{ name: userName, age: userAge }] = arr1
+        console.log(userName, userAge)
+        console.log('-----------------嵌套对象的析构赋值-----------------')
+        const user = {
+            name: '张三',
+            age: 18,
+            address: {
+                city: '北京',
+                street: '东城区'
+            }
+        }
+        const { name: userName1, age: userAge1, address: { city, street } } = user
+        console.log(userName1, userAge1, city, street)
+
+
+    </script>
+</body>
+
+</html>

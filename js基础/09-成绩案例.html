@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        //需求：用户输入一个成绩，判断这个成绩是否是格格
+        let score = prompt('请输入成绩：')
+        if (score >= 90) {
+            document.write('优秀')
+        } else if (score >= 70 && score < 90) {
+            document.write('良好')
+        } else if (score >= 60 && score < 70) {
+            document.write('及格')
+        } else {
+            document.write('不及格')
+        }
+    </script>
+</body>
+
+</html>

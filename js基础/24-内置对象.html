@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    table {
+        width: 200px;
+        text-align: center;
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+
+    th,
+    td {
+        padding: 10px;
+    }
+
+    caption {
+        font-size: 18px;
+        margin-bottom: 10px;
+        font-weight: 700;
+    }
+
+    table tr:nth-child(1) {
+        background-color: #ddd;
+    }
+
+    table tr:not(:first-child):hover {
+        background-color: #eee;
+    }
+</style>
+
+<body>
+    <script>
+        //如何生成0-10的随机数呢？
+        let randomNum = Math.floor(Math.random() * 11);
+        //如何生成5 - 10的随机数？
+        let randomNum5 = Math.floor(Math.random() * 6) + 5;
+        document.write("<table border='1'>");
+
+        document.write("<tr><td>随机数范围：0-10</td></tr>");
+        document.write("<tr><td>随机数为：" + randomNum + "</td></tr>");
+        document.write("<tr><td>随机数范围：5-10</td></tr>");
+        document.write("<tr><td>随机数为：" + randomNum5 + "</td></tr>");
+        document.write("<br>");
+        document.write("</table>");
+    </script>
+</body>
+
+</html>

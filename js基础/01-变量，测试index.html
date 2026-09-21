@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>JavaScript 基础 - 引入方式</title>
+</head>
+<style>
+    .pink {
+        background-color: pink;
+    }
+</style>
+
+<body>
+    <button class="pink">按钮1</button>
+    <button>按钮2</button>
+    <button>按钮3</button>
+    <button>按钮4</button>
+    <!-- 内联形式：通过 script 标签包裹 JavaScript 代码 -->
+    <script>
+        // 
+        /*  */
+        let btns = document.querySelectorAll('button')
+        for (let i = 0; i < btns.length; i++) {
+            btns[i].addEventListener('click', function () {
+                document.querySelector('.pink').className = ''
+                this.className = 'pink'
+
+            })
+        }
+        //输出文档 向body中添加内容
+        document.write(' <br>hello world')
+        document.write('<h1>你好，传智播</h1>')
+        //控制台输出
+        console.log('你好，传智播')
+        //输入框
+        // let name = prompt('请输入你的姓名')
+        console.log(name)
+        // document.write('你好，' + name)
+        let age
+        age = 18
+        console.log(age)
+
+    </script>
+</body>
+
+</html>

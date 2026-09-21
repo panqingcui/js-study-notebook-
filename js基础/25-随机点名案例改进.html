@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="result" style="font-size: 48px; font-weight: bold; margin: 20px 0; height: 60px;">?</div>
+
+    <button id="startBtn">开始</button>
+    <div id="history" style="margin-top: 20px;"></div>
+    <script>
+        //随机点名案例改进
+        let names = ['赵云', '黄忠', '关羽', '张飞', '马超', '刘备', '曹操'];
+        const resultDiv = document.getElementById('result')
+        const historyDiv = document.getElementById('history')
+        const startBtn = document.getElementById('startBtn')
+
+
+        startBtn.addEventListener('click', function () {
+            //随机点名
+            let randomNum = Math.floor(Math.random() * names.length);
+            resultDiv.innerHTML = names[randomNum]
+            historyDiv.innerHTML += names[randomNum] + "<br>"
+            //删除数组中的元素
+            names.splice(randomNum, 1)
+            if (names.length == 0) {
+                startBtn.disabled = true
+                resultDiv.innerHTML = "所有成员已点名"
+                resultDiv.style.color = "red"
+                resultDiv.style.fontSize = "36px"
+            }
+            else {
+                startBtn.disabled = false
+            }
+
+        })
+
+        document.write("<br>");
+        //  document.write("随机点名结果：" + names[randomNum]);
+    </script>
+
+</body>
+
+</html>

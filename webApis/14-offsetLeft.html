@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>offsetLeft 示例</title>
+    <style>
+        /* 页面整体样式 */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+            margin: 0;
+        }
+
+        /* 主容器 */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        p.tip {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        /* 外层父容器：带定位、边框、内边距 */
+        .grandpa {
+            position: relative;
+            background-color: #fff3e0;
+            border: 3px solid #ff9800;
+            padding: 30px;
+            margin-top: 20px;
+            border-radius: 12px;
+        }
+
+        .grandpa::before {
+            content: '.grandpa（相对定位父元素）';
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            font-size: 12px;
+            color: #ff9800;
+        }
+
+        /* 中间父容器：带边框、内边距 */
+        .parent {
+            background-color: #e3f2fd;
+            border: 3px solid #2196f3;
+            padding: 40px;
+            margin-top: 25px;
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .parent::before {
+            content: '.parent（中间层元素）';
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            font-size: 12px;
+            color: #2196f3;
+        }
+
+        /* 目标元素：红色方块 */
+        .target {
+            width: 120px;
+            height: 120px;
+            background-color: #f44336;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 14px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-left: 50px;
+            /* 目标元素左边距 50px */
+        }
+
+        .target:hover {
+            transform: scale(1.05);
+        }
+
+        /* 信息展示面板 */
+        .info-panel {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-panel h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #666;
+        }
+
+        .info-value {
+            color: #f44336;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* 视觉指示线 */
+        .indicator {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: #f44336;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .show-indicator .indicator {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>offsetLeft 示例</h2>
+        <p class="tip">
+            offsetLeft 表示元素相对于其**offsetParent（最近的有定位的父元素）**左边的距离。<br>
+            点击红色方块查看具体的 offsetLeft 数值。
+        </p>
+
+        <!-- 外层祖父容器（带相对定位） -->
+        <div class="grandpa">
+            <!-- 中间父容器 -->
+            <div class="parent">
+                <!-- 目标元素 -->
+                <div class="target" id="targetBox">
+                    点击我
+                </div>
+            </div>
+        </div>
+
+        <!-- 信息展示面板 -->
+        <div class="info-panel">
+            <h3>📏 测量结果</h3>
+            <div class="info-item">
+                <span class="info-label">target.offsetLeft（相对于 .parent）</span>
+                <span class="info-value" id="offsetLeftValue">-</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">target.offsetTop（相对于 .parent）</span>
+                <span class="info-value" id="offsetTopValue">-</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">target.offsetParent（定位父元素）</span>
+                <span class="info-value" id="offsetParentValue">-</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">target.offsetWidth（元素宽度）</span>
+                <span class="info-value" id="offsetWidthValue">-</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">target.offsetHeight（元素高度）</span>
+                <span class="info-value" id="offsetHeightValue">-</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const targetBox = document.querySelector('#targetBox')
+        const offsetLeftValue = document.querySelector('#offsetLeftValue')
+        const offsetTopValue = document.querySelector('#offsetTopValue')
+        const offsetParentValue = document.querySelector('#offsetParentValue')
+        const offsetWidthValue = document.querySelector('#offsetWidthValue')
+        const offsetHeightValue = document.querySelector('#offsetHeightValue')
+
+        // 点击目标元素时，显示 offset 相关数值
+        targetBox.addEventListener('click', function () {
+            // offsetLeft：元素左边框外侧到 offsetParent 左边框内侧的距离
+            offsetLeftValue.textContent = targetBox.offsetLeft + 'px'
+
+            // offsetTop：元素上边框外侧到 offsetParent 上边框内侧的距离
+            offsetTopValue.textContent = targetBox.offsetTop + 'px'
+
+            // offsetParent：返回最近的已定位（position 不为 static）的父元素
+            const parent = targetBox.offsetParent
+            offsetParentValue.textContent = parent ? parent.className : 'null'
+
+            // offsetWidth：元素的完整宽度（content + padding + border）
+            offsetWidthValue.textContent = targetBox.offsetWidth + 'px'
+
+            // offsetHeight：元素的完整高度（content + padding + border）
+            offsetHeightValue.textContent = targetBox.offsetHeight + 'px'
+        })
+
+        // 页面加载后自动触发一次，显示初始值
+        window.addEventListener('load', function () {
+            targetBox.click()
+        })
+    </script>
+</body>
+
+</html>

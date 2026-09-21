@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div></div>
+    <h1>深浅拷贝</h1>
+
+    <p>深拷贝：将一个对象的所有属性都递归地复制到一个新的对象中，包括对象的子对象。</p>
+    <p>浅拷贝：将一个对象的引用赋值给另一个对象，而不是复制对象的属性。</p>
+    <script src="./js/lodash.min.js"></script>
+    <script>
+        console.log('-----------------浅拷贝 -----------------直接赋值,简单数据类型,复杂数据类型都有影响');
+        // 直接赋值 在内存中的对象是同一个对象
+        const obj1 = { a: 1, b: 2 };
+        const obj2 = obj1;
+        console.log(obj1); // { a: 1, b: 2 }
+        // 当 obj1 的属性 a 变化时，obj2 也会变化
+        obj2.a = 100;
+        console.log(obj1.a); // { a: 100, b: 2 }
+        // 深拷贝 在内存中的对象是不同的对象
+        const obj3 = {
+            a: 1,
+            b: 2,
+            c: {
+                d: 3
+            }
+        };
+        const obj4 = JSON.parse(JSON.stringify(obj3));
+        console.log(obj4); // { a: 1, b: 2, c: { d: 3 } }
+        // 当 obj3 的属性 a 变化时，obj4 不会变化
+        obj3.a = 1000;
+        console.log(obj4.a); // { a: 1, b: 2, c: { d: 100 } }
+        console.log(obj3.a);
+        console.log('-----------------浅拷贝 -----------------Object.assgin(）简单数据类型不受影响，,复杂数据类型会改变');
+
+        //简单数据类型，不受影响，但复杂数据类型，会改变
+        const obj5 = {
+            a: 1,
+            b: 2,
+            c: {
+                d: 3
+            }
+        };
+        const obj6 = Object.assign({}, obj5);
+        console.log(obj6); // { a: 1, b: 2, c: { d: 3 } }
+        // 当 obj5 的属性 a 变化时，obj6 不会变化
+        obj5.a = 1000;
+        console.log(obj6.a); // { a: 1, b: 2, c: { d: 3 } }
+        console.log(obj5.a); // 1000        
+        console.log('复杂数据类型，会改变obj6的属性');
+        // 当 obj5 的属性 c 变化时，obj6 也会变化
+        obj5.c.d = 1000;
+        console.log(obj6.c.d); // 1000
+        console.log(obj5.c.d); // 1000
+
+        console.log('-----------------深拷贝 -----------------1.递归函数');
+        //递归函数 
+        function time() {
+            let div = document.querySelector('div');
+            div.innerHTML = new Date().toLocaleString()
+            setTimeout(time, 1000);
+        }
+        time();
+
+        // 2. 递归函数 深拷贝
+        function deepClone(obj) {
+            // 递归函数，用于深拷贝对象
+            console.log('deepClone', obj);
+            if (typeof obj !== 'object' || obj === null) {
+                return obj;
+            }
+            const clone = Array.isArray(obj) ? [] : {};
+            for (const key in obj) {
+                clone[key] = deepClone(obj[key]);
+            }
+            return clone;
+        }
+
+        // 3. 递归函数 深拷贝 测试拷贝后的对象是否与原对象不同
+        const obj7 = {
+            a: 1,
+            b: 2,
+            c: {
+                d: 3
+            }
+        };
+        const obj8 = deepClone(obj7);
+        console.log(obj8); // { a: 1, b: 2, c: { d: 3 } }
+        // 当 obj7 的属性 a 变化时，obj8 不会变化
+        obj7.a = 1000;
+        console.log(obj8.a); // { a: 1, b: 2, c: { d: 100 } }
+        console.log(obj7.a); // 1000
+        console.log('复杂数据类型，会改变obj8的属性');
+        // 当 obj7 的属性 c 变化时，obj8 也会变化
+        obj7.c.d = 1000;
+        console.log(obj8.c.d); // 1
+        console.log(obj7.c.d); // 1000
+        console.log('-----------------深拷贝 -----------------lodash.cloneDeep()');
+
+        // 4. lodash.cloneDeep() 深拷贝
+        const obj9 = {
+            a: 1,
+            b: 2,
+            c: {
+                d: 3
+            }
+        };
+        const obj10 = _.cloneDeep(obj9);
+        console.log(obj10); // { a: 1, b: 2, c: { d: 3 } }
+        // 当 obj9 的属性 a 变化时，obj10 不会变化
+        obj9.a = 1000;
+        console.log(obj10.a); // { a: 1, b: 2, c: { d: 100 } }
+        console.log(obj9.a); // 1000
+        console.log('lodash.cloneDeep() 深拷贝 测试拷贝后的对象是否与原对象不同');
+        // 当 obj9 的属性 c 变化时，obj10 也会变化
+        obj9.c.d = 1000;
+        console.log(obj10.c.d); // 1000
+        console.log(obj9.c.d); // 1000
+
+        console.log('-----------------深拷贝 -----------------JSON.parse(JSON.stringify(obj))');
+        const obj11 = JSON.parse(JSON.stringify(obj9));
+        console.log(obj11); // { a: 1, b: 2, c: { d: 3 } }
+        // 当 obj9 的属性 a 变化时，obj11 不会变化
+        obj9.a = 1000;
+        console.log(obj11.a); // { a: 1, b: 2, c: { d: 100 } }
+        console.log(obj9.a); // 1000
+        console.log('JSON.parse(JSON.stringify(obj)) 深拷贝 测试拷贝后的对象是否与原对象不同');
+        // 当 obj9 的属性 c 变化时，obj11 也会变化
+        obj9.c.d = 1;
+        console.log(obj11.c.d); // 1000
+        console.log(obj9.c.d); // 1000
+
+
+    </script>
+</body>
+
+</html>

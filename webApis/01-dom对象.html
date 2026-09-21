@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div id="foor" class="box">222</div>
+    <div id="foor2" class="box">ddd</div>
+    <ul class="list">
+        <li>111</li>
+        <li>222</li>
+        <li>333</li>
+    </ul>
+    <script>
+        console.log("#foo\bar"); // "#fooar"
+        //  document.querySelector("#foo\bar"); // 不匹配任何元素
+        let element = document.querySelector("#foo\\\\bar");
+        console.log(element); // null
+        let list = document.querySelector(".list");
+        console.log(list); // <ul class="list">
+        console.log('-----------------------'); // HTMLCollection(3) [li, li, li]
+        for (let item of list.children) {
+            console.log(item); // <li>111</li> <li>222</li> <li>333</li>
+        }
+
+        console.log('-----------------------'); // HTMLCollection(3) [li, li, li]
+        const div = document.querySelector("div");
+        console.log(div); //
+        const box = document.querySelector(".box");
+        console.log(box); // <div id="foor" class="box"></div>
+        console.dir(box);
+        const ul = document.querySelector("ul li:first-child");
+        console.log(ul);
+        const uls = document.querySelectorAll("ul li");
+        console.log(uls); // NodeList(3) [li, li, li]
+
+        const foor = document.querySelector('#foor2');
+        console.log(foor); // <div id="foor" class="box"></div>
+
+        foor.innerHTML = '<h1>nnewddd</h1>'
+        ul.innerText = 'nnewul'
+
+
+    </script>
+</body>
+
+</html>

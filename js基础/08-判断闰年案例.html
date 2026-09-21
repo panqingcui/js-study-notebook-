@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        //需求：用户输入一个年份，判断这个年份是否是闰年
+        let year = prompt('请输入一个年份：')
+        let result = (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)
+        if (result) {
+            document.write('是闰年')
+        } else {
+            document.write('不是闰年')
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div></div>
+    <script>
+        // 构建对象
+        function Person(name, age) {
+            this.name = name;
+            this.age = age;
+        }
+        // 实例化对象
+        let p1 = new Person('张三', 18);
+        console.log(p1);
+        console.log(p1.name);
+        console.log(p1.age);
+        // // ========== for...in 示例 ==========
+        // // for...in 用于遍历对象的可枚举属性（键名）
+        // console.log('--- for...in 遍历对象属性 ---');
+        // for (let key in p1) {
+        //     console.log(key + ': ' + p1[key]);
+        // }
+
+        // // for...in 遍历数组（获取索引）
+        // let arr = ['苹果', '香蕉', '橙子'];
+        // console.log('--- for...in 遍历数组（获取索引）---');
+        // for (let index in arr) {
+        //     console.log('索引: ' + index + ', 值: ' + arr[index]);
+        // }
+
+        // // ========== for...of 示例 ==========
+        // // for...of 用于遍历可迭代对象（直接获取值）
+        // console.log('--- for...of 遍历数组（获取值）---');
+        // for (let item of arr) {
+        //     console.log('值: ' + item);
+        // }
+
+        // // for...of 遍历字符串
+        // let str = 'Hello';
+        // console.log('--- for...of 遍历字符串 ---');
+        // for (let char of str) {
+        //     console.log(char);
+        // }
+
+        // // for...of 遍历 Map
+        // let map = new Map([
+        //     ['name', '李四'],
+        //     ['age', 20]
+        // ]);
+        // console.log('--- for...of 遍历 Map ---');
+        // for (let [key, value] of map) {
+        //     console.log(key + ': ' + value);
+        // }
+
+        // // for...of 遍历 Set
+        // let set = new Set([1, 2, 3, 3, 4]);
+        // console.log('--- for...of 遍历 Set ---');
+        // for (let num of set) {
+        //     console.log(num);
+        // }
+
+
+        console.log('--- Object-----');
+        console.log('Object.keys 静态方法获取对象中所有属性（键）');
+        for (let key of Object.keys(p1)) {
+            console.log(key);
+        }
+        console.log('Object.values 静态方法获取对象中所有属性值');
+        for (let value of Object.values(p1)) {
+            console.log(value);
+        }
+
+        console.log('Object.entries 静态方法获取对象中所有属性（键值对）');
+        for (let [key, value] of Object.entries(p1)) {
+            console.log(key + ': ' + value);
+        }
+        console.log('Object.assign 静态方法常用于对象拷贝');
+        let p2 = Object.assign({}, p1);
+        console.log(p2);
+        console.log(p2.name);
+        console.log(p2.age);
+        console.log('--- 数组-----');
+        let arr = [4, 1, 2, 3];
+        console.log('数组遍历');
+        for (let item of arr) {
+            console.log(item + ': ' + arr.indexOf(item));
+        }
+        console.log('数组排序');
+        arr.sort((a, b) => a - b);
+        console.log(arr);
+
+        console.log('数组反转');
+        arr.reverse();
+        console.log(arr);
+        console.log('forEach遍历数组')
+        arr.forEach((item, index) => {
+            console.log(item + ': ' + index);
+        })
+        console.log('filter过滤数组');
+        let newArr = arr.filter((item) => item > 2);
+        console.log(newArr);
+        console.log('map映射数组');
+        let newArr2 = arr.map((item) => item * 2);
+        console.log(newArr2);
+        console.log('reduce.reduce 方法用于对数组中的每个元素执行一个由您提供的的 reducer 函数(升序执行)，将其结果汇总为单个返回值。');
+        let sum = arr.reduce((acc, cur) => acc + cur, 0);
+        console.log(sum);
+
+        const arr1 = [{
+            name: '张三',
+            salary: 10000
+        }, {
+            name: '李四',
+            salary: 10000
+        }, {
+            name: '王五',
+            salary: 10000
+        },
+        ]
+        sum = arr1.reduce((acc, cur) => acc + cur.salary * 0.3, 0);
+        console.log(sum);
+
+        const gift = '50g的茶叶,清洗球'
+        const giftHtml = gift.split(',').map((item) =>
+            `<span>【赠品】 ${item}</span> <br>`
+        ).join('')
+
+        document.querySelector('div').innerHTML = giftHtml;
+    </script>
+</body>
+
+</html>

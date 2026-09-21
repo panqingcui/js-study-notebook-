@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    table {
+        width: 600px;
+        text-align: center;
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+
+    th,
+    td {
+        padding: 10px;
+    }
+
+    caption {
+        font-size: 18px;
+        margin-bottom: 10px;
+        font-weight: 700;
+    }
+
+    table tr:nth-child(1) {
+        background-color: #ddd;
+    }
+
+    table tr:not(:first-child):hover {
+        background-color: #eee;
+    }
+</style>
+</style>
+
+<body>
+    <script>
+        let person = {
+            name: '张三',
+            age: 18,
+            sex: '男',
+            sayHello: function () {
+                return '你好，我是' + this.name;
+            }
+        }
+        console.log('对象信息：');
+        console.log(person);
+        console.log('姓名：' + person.name);
+        console.log('年龄：' + person.age);
+        console.log('性别：' + person.sex);
+        console.log('-----------------遍历对象属性-----------------');
+        for (let key in person) {
+            console.log(key + '：' + person[key]);
+        }
+
+        console.log('姓名[name]：' + person['name']);
+
+        console.log('-----------------修改对象信息-----------------');
+        person.name = '李四';
+        person.age = 20;
+        person.sex = '女';
+        console.log('对象信息：');
+        console.log(person);
+        console.log('姓名：' + person.name);
+        console.log('年龄：' + person.age);
+        console.log('性别：' + person.sex);
+        console.log('-----------------删除对象属性-----------------');
+        delete person.age;
+        console.log('对象信息：');
+        console.log(person);
+        console.log('姓名：' + person.name);
+        console.log('性别：' + person.sex);
+        console.log('-----------------添加对象属性-----------------');
+        person.height = 1.8;
+        console.log('对象信息：');
+        console.log(person);
+        console.log('姓名：' + person.name);
+        console.log('性别：' + person.sex);
+        console.log('身高：' + person.height);
+
+        console.log('对象中方法：');
+
+
+        console.log(person.sayHello());
+
+        let students = [
+            { name: '小明', age: 18, gender: '男', hometown: '河北省' },
+            { name: '小红', age: 19, gender: '女', hometown: '河南省' },
+            { name: '小刚', age: 17, gender: '男', hometown: '山西省' },
+            { name: '小丽', age: 18, gender: '女', hometown: '山东省' }
+        ]
+        console.log('-----------------遍历数组-----------------');
+
+        document.write("<table border='1'>");
+        document.write("<caption>学生信息表</caption>");
+        document.write("<tr><th>序号</th><th>姓名</th><th>年龄</th><th>性别</th><th>家乡</th></tr>");
+        for (let i = 0; i < students.length; i++) {
+            document.write(`<tr>
+                <td>${i + 1}</td>
+                <td>${students[i].name}</td>
+                <td>${students[i].age}</td>
+                <td>${students[i].gender}</td>
+                <td>${students[i].hometown}</td>    
+                </tr>`);
+
+        }
+        document.write("</table>");
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>发布评论</title>
+    <style>
+        /* 清除所有元素的默认内外边距，并统一使用 border-box 计算宽高 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* 页面整体样式：设置字体、浅灰色背景、四周留白 */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        /* 主容器：限制最大宽度、居中显示、白色背景、圆角、阴影 */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 标题样式：下方留白、深灰色、字体大小 */
+        h2 {
+            margin-bottom: 16px;
+            color: #333;
+            font-size: 20px;
+        }
+
+        /* 评论输入框：宽度占满容器、内边距、边框、圆角 */
+        #comment {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            resize: vertical;
+            /* 只允许上下拖动调整高度 */
+            outline: none;
+            /* 去掉默认聚焦时的蓝色外边框 */
+            transition: border-color 0.2s;
+            /* 边框颜色变化时有0.2秒过渡动画 */
+        }
+
+        /* 输入框获得焦点时：边框变为蓝色 */
+        #comment:focus {
+            border-color: #409eff;
+        }
+
+        /* 字数统计的父容器：使用 flex 布局，内容靠右对齐 */
+        .wrapper {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-top: 8px;
+            margin-bottom: 12px;
+        }
+
+        /* 字数统计文字：小字号、灰色、默认完全透明（隐藏） */
+        .total {
+            font-size: 12px;
+            color: #999;
+            opacity: 0;
+            transition: opacity 0.2s;
+            /* 透明度变化时有0.2秒淡入淡出动画 */
+        }
+
+        /* 发布按钮：全宽、蓝色背景、白色文字、无边框、圆角 */
+        #publish {
+            width: 100%;
+            padding: 10px 0;
+            background-color: #409eff;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            /* 背景色变化时有0.2秒过渡动画 */
+        }
+
+        /* 鼠标悬停在按钮上时：背景色变亮 */
+        #publish:hover {
+            background-color: #66b1ff;
+        }
+
+        /* 鼠标点击按钮时：背景色变深 */
+        #publish:active {
+            background-color: #3a8ee6;
+        }
+
+        /* 评论结果区域：与上方按钮保持间距 */
+        #result {
+            margin-top: 20px;
+        }
+
+        /* 单条评论的样式：内边距、底部边框、行高、自动换行 */
+        .comment-item {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+            color: #333;
+            line-height: 1.6;
+            word-break: break-all;
+            /* 长单词或URL自动换行 */
+        }
+
+        /* 最后一条评论：去掉底部边框，避免重复 */
+        .comment-item:last-child {
+            border-bottom: none;
+        }
+
+        /* 第一条评论：顶部增加边框，与上方区域分隔 */
+        .comment-item:first-child {
+            border-top: 1px solid #eee;
+        }
+
+        /* 空评论提示文字：居中、灰色、上下留白 */
+        .empty-tip {
+            text-align: center;
+            color: #999;
+            font-size: 14px;
+            padding: 20px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>发表评论</h2>
+        <textarea id="comment" placeholder="请输入评论内容" rows="3" maxlength="200"></textarea>
+        <div class="wrapper">
+            <span class="total">0/200字</span>
+        </div>
+        <button id="publish">发布</button>
+        <div id="result">
+            <div class="empty-tip">暂无评论，快来发表第一条评论吧~</div>
+        </div>
+    </div>
+    <script>
+        // 评论内容输入框
+        const comment = document.querySelector('#comment')
+        // 评论内容输入框的字数
+        const total = document.querySelector('.total')
+        // 评论内容输入框获得焦点事件
+        comment.addEventListener('input', function () {
+            // 获取评论内容输入框的字数
+            const commentLength = comment.value.length
+            // 更新评论内容输入框的字数
+            total.innerHTML = commentLength + '/200字'
+        })
+        // 评论内容输入框失去焦点事件,total字数显示隐藏
+        comment.addEventListener('blur', function () {
+            total.style.opacity = 0
+        })
+        comment.addEventListener('focus', function () {
+            total.style.opacity = 1
+        })
+
+        // 发布按钮点击事件
+        const publish = document.querySelector('#publish')
+        const result = document.querySelector('#result')
+        publish.addEventListener('click', function (e) {
+            console.log('发布按钮点击事件', e)
+            // 获取评论内容
+            const comment = document.querySelector('#comment')
+            const commentContent = comment.value.trim()
+            if (!commentContent) {
+                alert('评论内容不能为空')
+                return
+            }
+            // 移除空提示
+            const emptyTip = result.querySelector('.empty-tip')
+            if (emptyTip) {
+                emptyTip.remove()
+            }
+            // 创建评论项并追加到结果区域
+            const item = document.createElement('div')
+            item.className = 'comment-item'
+            item.textContent = commentContent
+            result.appendChild(item)
+            // 清空输入框并重置字数统计
+            comment.value = ''
+            total.innerHTML = '0/200字'
+        })
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>儿童识字卡（互动增强版）</title>
+    <style>
+        /* ========== 全局重置 ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #fafbfc;
+            padding: 20px;
+            font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Zen Hei", sans-serif;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* ========== 标题区 ========== */
+        h1 {
+            text-align: center;
+            margin-bottom: 6px;
+            color: #333;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            margin-bottom: 16px;
+            color: #888;
+            font-size: 14px;
+        }
+
+        /* ========== 工具栏：朗读全部、导入导出、重置 ========== */
+        .toolbar {
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .toolbar button {
+            font-size: 14px;
+            padding: 8px 18px;
+            margin: 0 6px 6px 6px;
+            border: 2px solid #4E79A7;
+            border-radius: 6px;
+            background: #fff;
+            color: #4E79A7;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .toolbar button:hover {
+            background: #4E79A7;
+            color: #fff;
+        }
+
+        /* ========== 语音设置面板 ========== */
+        .voice-settings {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            z-index: 10001;
+            min-width: 320px;
+            max-width: 90%;
+        }
+
+        .voice-settings.show {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        .voice-settings h3 {
+            margin-bottom: 16px;
+            color: #333;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .voice-settings .setting-item {
+            margin-bottom: 16px;
+        }
+
+        .voice-settings label {
+            display: block;
+            margin-bottom: 6px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .voice-settings select,
+        .voice-settings input[type="range"] {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .voice-settings input[type="range"] {
+            padding: 0;
+            height: 6px;
+            -webkit-appearance: none;
+            background: #ddd;
+            border: none;
+        }
+
+        .voice-settings input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #4E79A7;
+            cursor: pointer;
+        }
+
+        .voice-settings .range-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        .voice-settings .btn-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .voice-settings button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .voice-settings .btn-save {
+            background: #4E79A7;
+            color: #fff;
+        }
+
+        .voice-settings .btn-save:hover {
+            background: #3a5f8a;
+        }
+
+        .voice-settings .btn-test {
+            background: #76B7B2;
+            color: #fff;
+        }
+
+        .voice-settings .btn-test:hover {
+            background: #5a9a95;
+        }
+
+        .voice-settings .btn-close {
+            background: #eee;
+            color: #666;
+        }
+
+        .voice-settings .btn-close:hover {
+            background: #ddd;
+        }
+
+        .voice-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+        }
+
+        .voice-overlay.show {
+            display: block;
+        }
+
+        /* ========== 筛选栏：切换显示模式 ========== */
+        .filter-bar {
+            text-align: center;
+            margin-bottom: 14px;
+        }
+
+        .filter-bar button {
+            font-size: 13px;
+            padding: 6px 14px;
+            margin: 0 4px;
+            border: 2px solid #76B7B2;
+            border-radius: 20px;
+            background: #fff;
+            color: #76B7B2;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-bar button:hover {
+            background: #76B7B2;
+            color: #fff;
+        }
+
+        .filter-bar button.active {
+            background: #76B7B2;
+            color: #fff;
+        }
+
+        /* ========== 分类标题（带渐变色背景） ========== */
+        .category-header {
+            grid-column: 1 / -1;
+            background: linear-gradient(90deg, var(--cat-color), color-mix(in srgb, var(--cat-color) 70%, white));
+            color: #fff;
+            padding: 8px 18px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 18px;
+            margin-bottom: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* 分类标题右侧的可见计数（如 3/10） */
+        .category-header .cat-count {
+            font-size: 13px;
+            opacity: 0.85;
+            font-weight: normal;
+            margin-left: auto;
+        }
+
+        /* ========== 卡片网格 ========== */
+        .char-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 16px;
+        }
+
+        /* 筛选模式：隐藏已学会 */
+        .char-grid.hide-learned .char-item.learned {
+            display: none;
+        }
+
+        /* 筛选模式：隐藏不认识 */
+        .char-grid.hide-unknown .char-item.unknown {
+            display: none;
+        }
+
+        /* 筛选模式：隐藏未学习（即只看有标记的） */
+        .char-grid.hide-unlearned .char-item:not(.learned):not(.unknown) {
+            display: none;
+        }
+
+        /* ========== 单个汉字卡片 ========== */
+        .char-item {
+            aspect-ratio: 1 / 1;
+            background: #fff;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            font-weight: bold;
+            color: #222;
+            transition: all 0.2s ease;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            cursor: pointer;
+            position: relative;
+            flex-direction: column;
+        }
+
+        /* 悬停卡片时的抬升效果 */
+        .char-item:hover {
+            border-color: #4E79A7;
+            transform: scale(1.03);
+            box-shadow: 0 4px 12px rgba(78, 121, 167, 0.15);
+        }
+
+        /* 朗读中的脉冲动画 */
+        .char-item.speaking {
+            border-color: #4E79A7;
+            box-shadow: 0 0 0 4px rgba(78, 121, 167, 0.25);
+            animation: pulse 0.4s ease infinite alternate;
+        }
+
+        @keyframes pulse {
+            from {
+                transform: scale(1);
+            }
+
+            to {
+                transform: scale(1.05);
+            }
+        }
+
+        /* 已学会状态：绿色 */
+        .char-item.learned {
+            background-color: #C8E6C9;
+            border-color: #4CAF50;
+            color: #1B5E20;
+            transform: scale(1.05);
+            box-shadow: 0 6px 16px rgba(76, 175, 80, 0.35);
+        }
+
+        /* 已学会右上角对勾 */
+        .char-item.learned::before {
+            content: '\2713';
+            position: absolute;
+            top: 4px;
+            right: 6px;
+            font-size: 18px;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        /* 双击/滑动后短暂冷却，防止重复触发 */
+        .char-item.cooldown {
+            pointer-events: none;
+            opacity: 0.85;
+        }
+
+        /* 不认识状态：橙色 */
+        .char-item.unknown {
+            background-color: #FFF3E0;
+            border-color: #FF9800;
+            color: #E65100;
+        }
+
+        /* 不认识右上角叉号 */
+        .char-item.unknown::after {
+            content: '\2717';
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            font-size: 16px;
+            color: #FF9800;
+            font-weight: bold;
+        }
+
+        /* 左上角喇叭按钮（默认隐藏，悬停时出现） */
+        .char-item .char-sound {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(78, 121, 167, 0.15);
+            color: #4E79A7;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+        }
+
+        .char-item:hover .char-sound,
+        .char-item.touching .char-sound {
+            opacity: 1;
+            pointer-events: auto;
+            cursor: pointer;
+        }
+
+        /* ========== 进度条 ========== */
+        .progress-bar-container {
+            margin-bottom: 16px;
+        }
+
+        .progress-labels {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .progress-item {
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .learned-count {
+            color: #2E7D32;
+            background: #E8F5E9;
+        }
+
+        .unknown-count {
+            color: #E65100;
+            background: #FFF3E0;
+        }
+
+        .remain-count {
+            color: #616161;
+            background: #F5F5F5;
+        }
+
+        .progress-bar {
+            height: 12px;
+            background: #E0E0E0;
+            border-radius: 6px;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .progress-learned {
+            background: linear-gradient(90deg, #81C784, #4CAF50);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-unknown {
+            background: linear-gradient(90deg, #FFE0B2, #FF9800);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        /* ========== 全部学完庆祝弹窗 ========== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-content {
+            background: #fff;
+            border-radius: 20px;
+            padding: 40px 50px;
+            text-align: center;
+            max-width: 90%;
+            animation: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes bounceIn {
+            from {
+                transform: scale(0.3);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-content .trophy {
+            font-size: 80px;
+            margin-bottom: 16px;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        .modal-content h2 {
+            color: #2E7D32;
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+
+        .modal-content p {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 24px;
+        }
+
+        .modal-content button {
+            background: #4CAF50;
+            color: #fff;
+            border: none;
+            padding: 12px 32px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .modal-content button:hover {
+            background: #388E3C;
+        }
+
+        /* ========== Toast 轻提示（替代 alert） ========== */
+        .toast {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 24px;
+            font-size: 14px;
+            z-index: 10000;
+            transition: transform 0.3s ease;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ========== 快捷键提示 ========== */
+        .keyboard-hint {
+            text-align: center;
+            font-size: 12px;
+            color: #aaa;
+            margin-top: 16px;
+        }
+
+        .keyboard-hint kbd {
+            background: #eee;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            padding: 1px 6px;
+            font-family: monospace;
+            font-size: 11px;
+            color: #555;
+        }
+
+        /* ========== 移动端适配 ========== */
+        @media (max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .char-grid {
+                grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+                gap: 10px;
+            }
+
+            .char-item {
+                font-size: 50px;
+                border-radius: 10px;
+            }
+
+            .toolbar button {
+                padding: 6px 12px;
+                font-size: 13px;
+                margin: 0 3px 4px 3px;
+            }
+
+            .progress-labels {
+                gap: 8px;
+                font-size: 12px;
+            }
+
+            .category-header {
+                font-size: 14px;
+                padding: 6px 12px;
+            }
+        }
+
+        /* ========== 打印样式 ========== */
+        @media print {
+            body {
+                padding: 0;
+                background: #fff;
+            }
+
+            .char-item {
+                border: 1px solid #999;
+                background: #fff;
+                font-size: 48px;
+            }
+
+            .toolbar,
+            .filter-bar,
+            .keyboard-hint {
+                display: none;
+            }
+
+            .category-header {
+                background: #eee !important;
+                color: #333 !important;
+                border: 1px solid #999;
+            }
+
+            .char-item.learned {
+                background: #fff;
+                border-color: #999;
+                color: #333;
+                box-shadow: none;
+                transform: none;
+            }
+
+            .char-item.unknown {
+                background: #fff;
+                border-color: #999;
+                color: #333;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- 标题 -->
+        <h1>儿童识字卡（互动增强版）</h1>
+        <p class="subtitle" id="subtitle"></p>
+
+        <!-- 工具栏：朗读全部、导入导出、重置 -->
+        <div class="toolbar">
+            <button id="btnSpeakAll" title="朗读当前可见的所有汉字">🔊 朗读全部</button>
+            <button id="btnVoiceSettings" title="设置语音参数">⚙️ 语音设置</button>
+            <button id="btnExport">导出进度</button>
+            <button id="btnImport">导入进度</button>
+            <button id="btnReset">重置进度</button>
+            <input type="file" id="fileImport" accept=".json" style="display:none;">
+        </div>
+
+        <!-- 筛选栏：切换显示模式 -->
+        <div class="filter-bar">
+            <button class="active" data-filter="all">全部</button>
+            <button data-filter="unknown">只看不认识</button>
+            <button data-filter="unlearned">只看未学习</button>
+            <button data-filter="learned">隐藏已学会</button>
+        </div>
+
+        <!-- 进度条 -->
+        <div class="progress-bar-container">
+            <div class="progress-labels">
+                <span class="progress-item learned-count">已学会 0</span>
+                <span class="progress-item unknown-count">不认识 0</span>
+                <span class="progress-item remain-count">未学习 0</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-learned" style="width:0%"></div>
+                <div class="progress-unknown" style="width:0%"></div>
+            </div>
+        </div>
+
+        <!-- 汉字卡片网格（由 JS 动态渲染） -->
+        <div class="char-grid" id="charGrid"></div>
+
+        <!-- 底部快捷键提示 -->
+        <div class="keyboard-hint">
+            快捷键：<kbd>空格</kbd> 朗读最后可见卡片 | 手机可左右滑动（右滑=已学，左滑=不认识）
+        </div>
+    </div>
+
+    <!-- 全部学完的庆祝弹窗 -->
+    <div class="modal" id="celebrateModal">
+        <div class="modal-content">
+            <div class="trophy">&#127942;</div>
+            <h2>太棒了！全部学会啦！</h2>
+            <p>你已经掌握了所有汉字，真厉害！</p>
+            <button id="celebrateClose">继续努力</button>
+        </div>
+    </div>
+
+    <!-- Toast 轻提示 -->
+    <div class="toast" id="toast"></div>
+
+    <!-- 语音设置面板 -->
+    <div class="voice-overlay" id="voiceOverlay"></div>
+    <div class="voice-settings" id="voiceSettings">
+        <h3>🔊 语音设置</h3>
+        <div class="setting-item">
+            <label for="voiceSelect">发音人</label>
+            <select id="voiceSelect"></select>
+        </div>
+        <div class="setting-item">
+            <label for="rateRange">语速：<span id="rateValue">0.8</span></label>
+            <input type="range" id="rateRange" min="0.3" max="1.5" step="0.1" value="0.8">
+            <div class="range-labels">
+                <span>慢</span>
+                <span>正常</span>
+                <span>快</span>
+            </div>
+        </div>
+        <div class="setting-item">
+            <label for="pitchRange">音调：<span id="pitchValue">1.1</span></label>
+            <input type="range" id="pitchRange" min="0.5" max="2" step="0.1" value="1.1">
+            <div class="range-labels">
+                <span>低</span>
+                <span>中</span>
+                <span>高</span>
+            </div>
+        </div>
+        <div class="btn-group">
+            <button class="btn-test" id="btnTestVoice">🎵 测试</button>
+            <button class="btn-save" id="btnSaveVoice">💾 保存</button>
+            <button class="btn-close" id="btnCloseVoice">关闭</button>
+        </div>
+    </div>
+
+    <script>
+        /* ========================================================================
+         * 儿童识字卡 —— 核心脚本
+         * 功能：单击标记不认识，双击标记已学会，悬停点喇叭发音，支持筛选/导入导出
+         * ======================================================================== */
+        (function () {
+            'use strict';
+
+            /* ---------------- 配置数据 ---------------- */
+
+            /**
+             * 所有汉字按分类组织，后续加字只要改这里就行
+             * 每个分类对象包含：
+             *   name  - 分类名称
+             *   color - 分类标题背景色
+             *   chars - 该分类下的汉字数组
+             */
+            var CATEGORIES = [
+                { name: '数字', color: '#4E79A7', chars: ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '百', '千', '万', '零', '半'] },
+                { name: '家庭成员', color: '#F28E2B', chars: ['爸', '妈', '爷', '奶', '哥', '姐', '弟', '妹', '公', '婆', '儿', '女', '叔', '舅'] },
+                { name: '身体部位', color: '#59A14F', chars: ['人', '口', '手', '目', '耳', '头', '牙', '心', '足', '舌', '身', '面', '眉', '背', '腿'] },
+                { name: '自然景物', color: '#E15759', chars: ['日', '月', '山', '水', '火', '土', '风', '云', '雨', '雪', '天', '地', '石', '田', '河', '光', '星', '沙', '江', '湖', '海', '虹', '雾'] },
+                { name: '动植物', color: '#76B7B2', chars: ['鸟', '鱼', '虫', '马', '牛', '羊', '鸡', '犬', '虎', '兔', '花', '草', '木', '竹', '苗', '果', '叶', '林', '鸭', '猫', '桃', '松'] },
+                { name: '日常用品', color: '#EDC948', chars: ['刀', '尺', '门', '窗', '桌', '椅', '灯', '书', '笔', '衣', '食', '米', '饭', '杯', '布', '伞', '纸', '包', '鞋', '钟'] },
+                { name: '动作行为', color: '#B07AA1', chars: ['看', '听', '说', '走', '跑', '飞', '吃', '睡', '开', '关', '来', '去', '立', '坐', '推', '拉', '抱', '打', '唱', '写', '读'] },
+                { name: '方位与基础', color: '#2D5F8A', chars: ['左', '右', '东', '西', '南', '北', '中', '间', '上', '下', '里', '外', '前', '后'] },
+                { name: '时间与季节', color: '#2A6B5A', chars: ['春', '夏', '秋', '冬', '早', '午', '晚', '今', '明', '昨', '年', '期', '刻', '分', '周'] },
+                { name: '颜色与形状', color: '#6B2A35', chars: ['黄', '蓝', '绿', '黑', '白', '红', '圆', '方', '长', '短', '紫', '灰', '大', '小'] },
+                { name: '自然现象', color: '#3A7D6A', chars: ['雷', '电', '闪', '露', '冰'] },
+                { name: '情感与表达', color: '#8B4513', chars: ['洗', '跳', '乐', '爱', '怕', '高', '兴', '伤', '生', '气', '感', '谢', '想', '笑', '哭'] },
+                { name: '校园学习', color: '#3D4F8A', chars: ['学', '习', '校', '师', '文', '语', '课', '业', '同', '朋', '友', '园', '字', '数', '音'] },
+                { name: '虚词与量词', color: '#4A5E2A', chars: ['的', '了', '不', '是', '在', '有', '个', '这', '那', '和', '与', '但', '如', '只', '本', '条', '片', '朵', '每', '多', '少'] },
+                { name: '生活场景', color: '#5A2A6B', chars: ['视', '碗', '盘', '勺', '袜', '房', '屋', '墙', '梯', '桶', '盆'] }
+            ];
+
+            /* ---------------- 运行时变量 ---------------- */
+
+            var TOTAL_CHARS = 0;                        // 汉字总数（由 CATEGORIES 自动计算）
+            const STORAGE_KEY = 'hanzi_v4_learned';       // localStorage 已学会的 key
+            var UNKNOWN_KEY = 'hanzi_v4_unknown';       // localStorage 不认识的 key
+            const CLICK_DELAY = 260;                      // 区分单击/双击的等待时间（毫秒）
+            var COOLDOWN_MS = 300;                      // 双击/滑动后的冷却时间，防止误触发
+            var clickTimers = {};                       // 存放每个卡片的单击定时器 { id: timer }
+            var currentFilter = 'all';                  // 当前筛选模式
+            var celebrateShown = false;                 // 全部学完的庆祝弹窗是否已显示过
+            var voicesReady = false;                    // 语音引擎是否已加载完成（Chrome 需要等）
+            var speakAllTimer = null;                   // 朗读全部功能的定时器，用于中途停止
+            var availableVoices = [];                   // 可用的语音列表
+            var voiceSettings = {                       // 当前语音设置
+                voiceIndex: -1,                         // -1 表示使用默认
+                rate: 0.8,                              // 语速（0.3-1.5）
+                pitch: 1.1                              // 音调（0.5-2.0）
+            };
+            var VOICE_STORAGE_KEY = 'hanzi_v4_voice_settings';  // 语音设置存储 key
+
+            // 自动计算总数
+            CATEGORIES.forEach(function (c) { TOTAL_CHARS += c.chars.length; });
+
+            // 更新副标题显示总数
+            document.getElementById('subtitle').textContent =
+                '共 ' + TOTAL_CHARS + ' 个汉字 | 单击=不认识，双击=已学会，喇叭=发音 | 进度自动保存';
+
+            /* ---------------- 语音合成（Web Speech API） ---------------- */
+
+            /**
+             * Chrome 的语音引擎首次加载时 voices 列表为空，需要等它触发 onvoiceschanged
+             * 这里预先注册监听，确保 speak 调用时引擎已就绪
+             */
+            if ('speechSynthesis' in window) {
+                // 某些浏览器（如 Chrome）需要手动触发一次 getVoices 才会加载
+                availableVoices = window.speechSynthesis.getVoices();
+
+                // 如果语音列表已经加载完成，直接初始化
+                if (availableVoices.length > 0) {
+                    voicesReady = true;
+                }
+
+                window.speechSynthesis.onvoiceschanged = function () {
+                    voicesReady = true;
+                    availableVoices = window.speechSynthesis.getVoices();
+                    populateVoiceSelect();
+                    restoreVoiceSelection();
+                };
+            }
+
+            /**
+             * 恢复之前保存的发音人选择
+             */
+            function restoreVoiceSelection() {
+                if (voiceSettings.voiceIndex >= 0 && voiceSettings.voiceIndex < availableVoices.length) {
+                    var select = document.getElementById('voiceSelect');
+                    if (select) {
+                        select.value = voiceSettings.voiceIndex;
+                    }
+                }
+            }
+
+            /**
+             * 初始化语音设置（在 DOMContentLoaded 时调用）
+             * 先加载保存的设置，再填充语音列表
+             */
+            function initVoiceSettings() {
+                // 先加载保存的设置
+                loadVoiceSettings();
+
+                // 如果语音列表已经加载完成，立即填充下拉框
+                if (voicesReady && availableVoices.length > 0) {
+                    populateVoiceSelect();
+                    restoreVoiceSelection();
+                }
+                // 否则等待 onvoiceschanged 事件触发
+            }
+
+            /**
+             * 填充发音人选择下拉框
+             * 优先显示中文语音，其他语言也列出供选择
+             */
+            function populateVoiceSelect() {
+                var select = document.getElementById('voiceSelect');
+                if (!select) return;
+
+                select.innerHTML = '';
+
+                // 添加默认选项
+                var defaultOption = document.createElement('option');
+                defaultOption.value = -1;
+                defaultOption.textContent = '默认语音（浏览器自动选择）';
+                select.appendChild(defaultOption);
+
+                // 筛选中文语音
+                var chineseVoices = availableVoices.filter(function (v) {
+                    return v.lang.indexOf('zh') === 0 || v.lang.indexOf('cmn') === 0;
+                });
+
+                // 添加中文语音选项
+                if (chineseVoices.length > 0) {
+                    var optgroup = document.createElement('optgroup');
+                    optgroup.label = '中文语音';
+                    chineseVoices.forEach(function (voice, idx) {
+                        var option = document.createElement('option');
+                        option.value = availableVoices.indexOf(voice);
+                        option.textContent = voice.name + ' (' + voice.lang + ')';
+                        if (voice.localService) {
+                            option.textContent += ' [本地]';
+                        }
+                        optgroup.appendChild(option);
+                    });
+                    select.appendChild(optgroup);
+                }
+
+                // 添加其他语言语音
+                var otherVoices = availableVoices.filter(function (v) {
+                    return v.lang.indexOf('zh') !== 0 && v.lang.indexOf('cmn') !== 0;
+                });
+
+                if (otherVoices.length > 0) {
+                    var optgroup = document.createElement('optgroup');
+                    optgroup.label = '其他语言';
+                    otherVoices.forEach(function (voice) {
+                        var option = document.createElement('option');
+                        option.value = availableVoices.indexOf(voice);
+                        option.textContent = voice.name + ' (' + voice.lang + ')';
+                        optgroup.appendChild(option);
+                    });
+                    select.appendChild(optgroup);
+                }
+
+                // 恢复之前保存的选择（在填充完成后立即恢复）
+                if (voiceSettings.voiceIndex >= 0 && voiceSettings.voiceIndex < availableVoices.length) {
+                    select.value = voiceSettings.voiceIndex;
+                }
+            }
+
+            /**
+             * 加载保存的语音设置
+             */
+            function loadVoiceSettings() {
+                try {
+                    var saved = localStorage.getItem(VOICE_STORAGE_KEY);
+                    if (saved) {
+                        var settings = JSON.parse(saved);
+                        voiceSettings.voiceIndex = settings.voiceIndex !== undefined ? settings.voiceIndex : -1;
+                        voiceSettings.rate = settings.rate || 0.8;
+                        voiceSettings.pitch = settings.pitch || 1.1;
+
+                        // 更新 UI
+                        var rateRange = document.getElementById('rateRange');
+                        var pitchRange = document.getElementById('pitchRange');
+                        var rateValue = document.getElementById('rateValue');
+                        var pitchValue = document.getElementById('pitchValue');
+
+                        if (rateRange) rateRange.value = voiceSettings.rate;
+                        if (pitchRange) pitchRange.value = voiceSettings.pitch;
+                        if (rateValue) rateValue.textContent = voiceSettings.rate.toFixed(1);
+                        if (pitchValue) pitchValue.textContent = voiceSettings.pitch.toFixed(1);
+                    }
+                } catch (e) {
+                    console.warn('加载语音设置失败', e);
+                }
+            }
+
+            /**
+             * 保存语音设置到 localStorage
+             */
+            function saveVoiceSettings() {
+                try {
+                    localStorage.setItem(VOICE_STORAGE_KEY, JSON.stringify(voiceSettings));
+                    showToast('语音设置已保存 ✓');
+                } catch (e) {
+                    console.warn('保存语音设置失败', e);
+                }
+            }
+
+            /**
+             * 朗读单个字符串
+             * @param {string} text - 要朗读的文字
+             * @param {boolean} silentMode - 是否静默（不显示不支持的 toast）
+             *
+             * Chrome bug 修复：cancel() 后立即 speak() 有时会失效，
+             * 用 50ms 延迟确保 cancel 完成
+             */
+            function speak(text, silentMode) {
+                if (!('speechSynthesis' in window)) {
+                    if (!silentMode) showToast('浏览器不支持语音功能');
+                    return;
+                }
+                if (!text) return;
+
+                try {
+                    // Chrome bug 修复：cancel() 后立即 speak() 有时会失效
+                    speechSynthesis.cancel();
+
+                    setTimeout(function () {
+                        var utter = new SpeechSynthesisUtterance(text);
+                        utter.lang = 'zh-CN';   // 中文
+                        utter.rate = voiceSettings.rate;      // 使用设置的语速
+                        utter.pitch = voiceSettings.pitch;    // 使用设置的音调
+
+                        // 如果选择了特定发音人，应用它
+                        if (voiceSettings.voiceIndex >= 0 &&
+                            voiceSettings.voiceIndex < availableVoices.length) {
+                            utter.voice = availableVoices[voiceSettings.voiceIndex];
+                        }
+
+                        speechSynthesis.speak(utter);
+                    }, 50); // 增加到 50ms，更可靠
+                } catch (e) {
+                    console.warn('语音朗读失败', e);
+                }
+            }
+
+            /**
+             * 朗读某个卡片上的汉字
+             * 修复：从 data-char 属性读取，避免把喇叭 emoji 也读进去
+             * 旧版 bug：box.textContent.trim() 取到的是 "🔊一"，导致朗读乱码
+             */
+            function speakBox(box) {
+                var char = box.getAttribute('data-char');
+                if (char) speak(char, true);
+            }
+
+            /**
+             * 朗读当前所有可见的汉字（工具栏按钮调用）
+             * 每个汉字之间停顿 600ms，方便孩子跟读
+             * 再次点击可中途停止
+             */
+            function speakAll() {
+                // 如果正在朗读，点击停止
+                if (speakAllTimer) {
+                    speechSynthesis.cancel();
+                    clearTimeout(speakAllTimer);
+                    speakAllTimer = null;
+                    showToast('已停止朗读');
+                    return;
+                }
+
+                var boxes = document.querySelectorAll('.char-item');
+                var queue = [];
+                boxes.forEach(function (b) {
+                    // 只收集当前可见（未被筛选隐藏）的卡片
+                    if (getComputedStyle(b).display !== 'none') {
+                        // 修复：从 data-char 取，不会带 emoji
+                        var ch = b.getAttribute('data-char');
+                        if (ch) queue.push(ch);
+                    }
+                });
+                if (!queue.length) { showToast('当前没有可朗读的汉字'); return; }
+
+                showToast('开始朗读 ' + queue.length + ' 个汉字（再次点击停止）');
+                var idx = 0;
+
+                function next() {
+                    if (idx >= queue.length) {
+                        speakAllTimer = null;
+                        showToast('朗读完成 ✓');
+                        return;
+                    }
+                    speakAllTimer = setTimeout(function () {
+                        speak(queue[idx], true);
+                        idx++;
+                        next();
+                    }, 600); // 每个字间隔 600ms
+                }
+                next();
+            }
+
+            /* ---------------- localStorage 存取 ---------------- */
+
+            /** 从 localStorage 读取已学会的汉字 ID 列表 */
+            function getLearnedIds() {
+                try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch (e) { return []; }
+            }
+
+            /** 从 localStorage 读取不认识的汉字 ID 列表 */
+            function getUnknownIds() {
+                try { return JSON.parse(localStorage.getItem(UNKNOWN_KEY) || '[]'); } catch (e) { return []; }
+            }
+
+            /** 保存已学会的汉字 ID 列表 */
+            function setLearnedIds(ids) { localStorage.setItem(STORAGE_KEY, JSON.stringify(ids)); }
+
+            /** 保存不认识的汉字 ID 列表 */
+            function setUnknownIds(ids) { localStorage.setItem(UNKNOWN_KEY, JSON.stringify(ids)); }
+
+            /* ---------------- Toast 轻提示 ---------------- */
+
+            /**
+             * 显示底部轻提示（替代 alert）
+             * @param {string} msg - 提示文字
+             */
+            function showToast(msg) {
+                var t = document.getElementById('toast');
+                t.textContent = msg;
+                t.classList.add('show');
+                clearTimeout(showToast._timer);
+                showToast._timer = setTimeout(function () { t.classList.remove('show'); }, 1800);
+            }
+
+            /* ---------------- 渲染卡片网格 ---------------- */
+
+            /**
+             * 动态生成所有卡片 DOM
+             * 之前的版本是硬编码在 HTML 里的，现在从 JS 数据生成，方便维护
+             */
+            function renderGrid() {
+                var grid = document.getElementById('charGrid');
+                grid.innerHTML = '';
+
+                // 先把已存的 ID 转成快速查找的对象（O(1) 查，比 indexOf 快）
+                var learnedSet = {};
+                var unknownSet = {};
+                getLearnedIds().forEach(function (id) { learnedSet[id] = true; });
+                getUnknownIds().forEach(function (id) { unknownSet[id] = true; });
+
+                CATEGORIES.forEach(function (cat) {
+                    // 分类标题
+                    var header = document.createElement('div');
+                    header.className = 'category-header';
+                    header.style.setProperty('--cat-color', cat.color);
+                    header.innerHTML = '<span>' + cat.name + '</span>' +
+                        '<span class="cat-count"></span>';
+                    grid.appendChild(header);
+
+                    // 每个汉字卡片
+                    cat.chars.forEach(function (ch, i) {
+                        var id = cat.name + '_' + i + '_' + ch;
+                        var item = document.createElement('div');
+                        item.className = 'char-item';
+                        item.setAttribute('data-id', id);
+                        item.setAttribute('data-char', ch);  // 存真正的汉字，供朗读/导出使用
+                        item.innerHTML =
+                            '<span class="char-sound" title="点击发音">&#128266;</span>' +
+                            '<span class="char-text">' + ch + '</span>';
+
+                        // 恢复之前标记的状态
+                        if (learnedSet[id]) item.classList.add('learned');
+                        if (unknownSet[id]) item.classList.add('unknown');
+
+                        attachBoxEvents(item);
+                        grid.appendChild(item);
+                    });
+                });
+
+                applyFilter();
+                updateProgress();
+            }
+
+            /* ---------------- 筛选显示 ---------------- */
+
+            /**
+             * 根据当前筛选模式，隐藏/显示对应状态的卡片
+             * 同时更新每个分类标题右侧的计数（可见数 / 总数）
+             */
+            function applyFilter() {
+                var grid = document.getElementById('charGrid');
+                grid.classList.remove('hide-learned', 'hide-unknown', 'hide-unlearned');
+                if (currentFilter === 'learned') grid.classList.add('hide-learned');
+                if (currentFilter === 'unknown') grid.classList.add('hide-unlearned', 'hide-learned');
+                if (currentFilter === 'unlearned') grid.classList.add('hide-learned', 'hide-unknown');
+
+                // 更新每个分类标题右侧的计数
+                var headers = document.querySelectorAll('.category-header');
+                var childrenArray = Array.from(grid.children);  // HTMLCollection 转数组
+                CATEGORIES.forEach(function (cat, idx) {
+                    var header = headers[idx];
+                    if (!header) return;
+                    var visibleCount = 0;
+                    var startIdx = childrenArray.indexOf(header) + 1;
+                    for (var i = startIdx; i < childrenArray.length; i++) {
+                        var child = childrenArray[i];
+                        if (child.classList.contains('category-header')) break;
+                        if (getComputedStyle(child).display !== 'none') visibleCount++;
+                    }
+                    header.querySelector('.cat-count').textContent = visibleCount + ' / ' + cat.chars.length;
+                });
+            }
+
+            /* ---------------- 更新进度显示 ---------------- */
+
+            /**
+             * 更新进度条和计数显示
+             * 全部学会时触发庆祝弹窗（只弹一次，重置后可以再弹）
+             */
+            function updateProgress() {
+                var learned = getLearnedIds().length;
+                var unknown = getUnknownIds().length;
+                var remain = TOTAL_CHARS - learned - unknown;
+
+                document.querySelector('.learned-count').textContent = '已学会 ' + learned;
+                document.querySelector('.unknown-count').textContent = '不认识 ' + unknown;
+                document.querySelector('.remain-count').textContent = '未学习 ' + remain;
+                document.querySelector('.progress-learned').style.width =
+                    (learned / TOTAL_CHARS * 100).toFixed(1) + '%';
+                document.querySelector('.progress-unknown').style.width =
+                    (unknown / TOTAL_CHARS * 100).toFixed(1) + '%';
+
+                // 全部学会 → 触发庆祝（只弹一次，重置进度后可以再次触发）
+                if (learned === TOTAL_CHARS && !celebrateShown) {
+                    celebrateShown = true;
+                    setTimeout(function () {
+                        document.getElementById('celebrateModal').classList.add('show');
+                        speak('太棒了！你全部学会了！', true);
+                    }, 400);
+                }
+            }
+
+            /* ---------------- 状态切换核心逻辑 ---------------- */
+
+            /**
+             * 切换某个卡片的学习状态
+             * @param {Element} box - 卡片 DOM
+             * @param {string} target - 'learned' 或 'unknown'
+             *
+             * 规则：点击"已学会"取消，点击"不认识"取消；两者互斥
+             */
+            function toggleStatus(box, target) {
+                var id = box.getAttribute('data-id');
+                var learned = getLearnedIds();
+                var unknown = getUnknownIds();
+
+                if (target === 'learned') {
+                    if (box.classList.contains('learned')) {
+                        // 取消已学会
+                        box.classList.remove('learned');
+                        learned = learned.filter(function (x) { return x !== id; });
+                    } else {
+                        // 标记已学会 → 同时从"不认识"里移除
+                        box.classList.remove('unknown');
+                        unknown = unknown.filter(function (x) { return x !== id; });
+                        box.classList.add('learned');
+                        if (learned.indexOf(id) === -1) learned.push(id);
+                    }
+                } else {
+                    if (box.classList.contains('unknown')) {
+                        // 取消不认识
+                        box.classList.remove('unknown');
+                        unknown = unknown.filter(function (x) { return x !== id; });
+                    } else {
+                        // 标记不认识 → 同时从"已学会"里移除
+                        box.classList.remove('learned');
+                        learned = learned.filter(function (x) { return x !== id; });
+                        box.classList.add('unknown');
+                        if (unknown.indexOf(id) === -1) unknown.push(id);
+                    }
+                }
+
+                setLearnedIds(learned);
+                setUnknownIds(unknown);
+                updateProgress();
+                applyFilter();
+            }
+
+            // 单击 → 标记不认识，并朗读
+            function handleSingleClick(box) {
+                toggleStatus(box, 'unknown');
+                speakBox(box);
+            }
+
+            // 双击 / 右键 / 右滑 → 标记已学会，并朗读
+            function handleDoubleClick(box) {
+                toggleStatus(box, 'learned');
+                speakBox(box);
+            }
+
+            /* ---------------- 为单个卡片绑定所有交互 ---------------- */
+
+            /**
+             * 为单个卡片绑定所有交互事件：
+             *   - 单击 / 双击判断（用定时器区分）
+             *   - 右键标记已学会
+             *   - 手机触摸左右滑动
+             */
+            function attachBoxEvents(box) {
+
+                // --- 单击 / 双击判断 ---
+                // 原理：单击时等 CLICK_DELAY ms 看有没有第二次点击；
+                // 有 → 按双击处理并清掉单击定时器；没有 → 按单击处理
+                box.addEventListener('click', function (e) {
+                    // 点击左上角喇叭按钮 → 只朗读，不切换状态
+                    if (e.target.classList.contains('char-sound')) {
+                        speakBox(box);
+                        return;
+                    }
+                    if (box.classList.contains('cooldown')) return;
+
+                    var id = box.getAttribute('data-id');
+                    if (clickTimers[id]) {
+                        // 第二次点击：清掉单击定时器 → 按双击处理
+                        clearTimeout(clickTimers[id]);
+                        delete clickTimers[id];
+                        handleDoubleClick(box);
+                        // 冷却一小段时间，防止三连击
+                        box.classList.add('cooldown');
+                        setTimeout(function () { box.classList.remove('cooldown'); }, COOLDOWN_MS);
+                        return;
+                    }
+                    // 等待会不会有第二次点击
+                    clickTimers[id] = setTimeout(function () {
+                        delete clickTimers[id];
+                        handleSingleClick(box);
+                    }, CLICK_DELAY);
+                });
+
+                // --- 右键：标记已学会 ---
+                box.addEventListener('contextmenu', function (e) {
+                    e.preventDefault();
+                    var id = box.getAttribute('data-id');
+                    if (clickTimers[id]) { clearTimeout(clickTimers[id]); delete clickTimers[id]; }
+                    handleDoubleClick(box);
+                });
+
+                // --- 手机触摸：左右滑动手势 ---
+                var touchStartX = 0;
+                var touchStartTime = 0;
+                box.addEventListener('touchstart', function (e) {
+                    touchStartX = e.touches[0].clientX;
+                    touchStartTime = Date.now();
+                    box.classList.add('touching');
+                }, { passive: true });
+
+                box.addEventListener('touchend', function (e) {
+                    var dx = e.changedTouches[0].clientX - touchStartX;
+                    var dt = Date.now() - touchStartTime;
+                    box.classList.remove('touching');
+                    // 滑动阈值：50px 以上 + 500ms 内完成 → 判定为滑动
+                    if (dt < 500 && Math.abs(dx) > 50) {
+                        var id = box.getAttribute('data-id');
+                        if (clickTimers[id]) { clearTimeout(clickTimers[id]); delete clickTimers[id]; }
+                        if (dx > 0) handleDoubleClick(box);   // 向右滑 → 已学会
+                        else handleSingleClick(box);         // 向左滑 → 不认识
+                        e.preventDefault();
+                    }
+                }, { passive: true });
+            }
+
+            /* ---------------- 导入 / 导出 / 重置 ---------------- */
+
+            /**
+             * 导出学习进度为 JSON 文件
+             * 修复：从 data-char 取汉字，不会带 emoji
+             */
+            function exportProgress() {
+                var boxes = document.querySelectorAll('.char-item');
+                var data = {
+                    version: '4.0',
+                    exportDate: new Date().toISOString(),
+                    total: TOTAL_CHARS,
+                    learned: [],
+                    unknown: []
+                };
+                boxes.forEach(function (b) {
+                    var id = b.getAttribute('data-id');
+                    var ch = b.getAttribute('data-char');  // 从 data-char 取，不会带 emoji
+                    if (b.classList.contains('learned')) data.learned.push({ id: id, char: ch });
+                    if (b.classList.contains('unknown')) data.unknown.push({ id: id, char: ch });
+                });
+
+                var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                var url = URL.createObjectURL(blob);
+                var a = document.createElement('a');
+                a.href = url;
+                a.download = '汉字进度_' + new Date().toLocaleDateString('zh-CN').replace(/\//g, '-') + '.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showToast('进度已导出 ✓');
+            }
+
+            /**
+             * 从 JSON 文件导入学习进度
+             * @param {File} file - 用户选择的 JSON 文件
+             */
+            function importProgress(file) {
+                if (!file) return;
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    try {
+                        var data = JSON.parse(e.target.result);
+                        if (!Array.isArray(data.learned)) throw new Error('文件格式不正确');
+
+                        localStorage.removeItem(STORAGE_KEY);
+                        localStorage.removeItem(UNKNOWN_KEY);
+
+                        setLearnedIds(data.learned.map(function (x) { return x.id; }));
+                        if (data.unknown) setUnknownIds(data.unknown.map(function (x) { return x.id; }));
+
+                        celebrateShown = false;
+                        renderGrid();
+                        showToast('导入成功 ✓');
+                    } catch (err) {
+                        alert('文件解析失败：' + err.message);
+                    }
+                };
+                reader.readAsText(file);
+            }
+
+            /** 重置所有学习进度（需确认） */
+            function resetProgress() {
+                if (confirm('确定要重置所有学习进度吗？此操作不可撤销。')) {
+                    localStorage.removeItem(STORAGE_KEY);
+                    localStorage.removeItem(UNKNOWN_KEY);
+                    celebrateShown = false;
+                    renderGrid();
+                    showToast('进度已重置');
+                }
+            }
+
+            /* ---------------- 启动 ---------------- */
+
+            document.addEventListener('DOMContentLoaded', function () {
+                // 渲染所有卡片
+                renderGrid();
+
+                // 初始化语音设置（加载保存的设置 + 填充语音列表）
+                initVoiceSettings();
+
+                // 工具栏按钮
+                document.getElementById('btnExport').addEventListener('click', exportProgress);
+                document.getElementById('btnImport').addEventListener('click', function () {
+                    document.getElementById('fileImport').click();
+                });
+                document.getElementById('btnReset').addEventListener('click', resetProgress);
+                document.getElementById('btnSpeakAll').addEventListener('click', speakAll);
+
+                // 语音设置按钮
+                document.getElementById('btnVoiceSettings').addEventListener('click', function () {
+                    document.getElementById('voiceSettings').classList.add('show');
+                    document.getElementById('voiceOverlay').classList.add('show');
+                });
+
+                // 关闭语音设置面板
+                function closeVoicePanel() {
+                    document.getElementById('voiceSettings').classList.remove('show');
+                    document.getElementById('voiceOverlay').classList.remove('show');
+                }
+
+                document.getElementById('btnCloseVoice').addEventListener('click', closeVoicePanel);
+                document.getElementById('voiceOverlay').addEventListener('click', closeVoicePanel);
+
+                // 语速滑块
+                var rateRange = document.getElementById('rateRange');
+                var rateValue = document.getElementById('rateValue');
+                rateRange.addEventListener('input', function () {
+                    voiceSettings.rate = parseFloat(rateRange.value);
+                    rateValue.textContent = voiceSettings.rate.toFixed(1);
+                });
+
+                // 音调滑块
+                var pitchRange = document.getElementById('pitchRange');
+                var pitchValue = document.getElementById('pitchValue');
+                pitchRange.addEventListener('input', function () {
+                    voiceSettings.pitch = parseFloat(pitchRange.value);
+                    pitchValue.textContent = voiceSettings.pitch.toFixed(1);
+                });
+
+                // 发音人选择
+                document.getElementById('voiceSelect').addEventListener('change', function () {
+                    voiceSettings.voiceIndex = parseInt(this.value);
+                });
+
+                // 测试语音
+                document.getElementById('btnTestVoice').addEventListener('click', function () {
+                    speak('你好，这是一个测试', false);
+                });
+
+                // 保存语音设置
+                document.getElementById('btnSaveVoice').addEventListener('click', function () {
+                    saveVoiceSettings();
+                    closeVoicePanel();
+                });
+
+                // 隐藏的文件选择器
+                document.getElementById('fileImport').addEventListener('change', function (e) {
+                    if (e.target.files[0]) {
+                        importProgress(e.target.files[0]);
+                        e.target.value = '';
+                    }
+                });
+
+                // 庆祝弹窗关闭
+                document.getElementById('celebrateClose').addEventListener('click', function () {
+                    document.getElementById('celebrateModal').classList.remove('show');
+                });
+                document.getElementById('celebrateModal').addEventListener('click', function (e) {
+                    if (e.target === this) this.classList.remove('show');
+                });
+
+                // 筛选栏切换
+                document.querySelectorAll('.filter-bar button').forEach(function (btn) {
+                    btn.addEventListener('click', function () {
+                        document.querySelectorAll('.filter-bar button').forEach(function (b) { b.classList.remove('active'); });
+                        btn.classList.add('active');
+                        currentFilter = btn.getAttribute('data-filter');
+                        applyFilter();
+                    });
+                });
+
+                // 键盘快捷键
+                document.addEventListener('keydown', function (e) {
+                    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+                    // 空格键或 S 键 → 朗读最后一个可见卡片
+                    if (e.code === 'Space' || e.key === 's' || e.key === 'S') {
+                        e.preventDefault();
+                        var boxes = document.querySelectorAll('.char-item');
+                        var last = null;
+                        boxes.forEach(function (b) {
+                            if (getComputedStyle(b).display !== 'none') last = b;
+                        });
+                        if (last) speakBox(last);
+                    }
+
+                    // ESC 键关闭语音设置面板
+                    if (e.key === 'Escape') {
+                        closeVoicePanel();
+                    }
+                });
+
+                // 窗口大小改变时重新计算分类计数
+                window.addEventListener('resize', applyFilter);
+            });
+        })();
+    </script>
+</body>
+
+</html>

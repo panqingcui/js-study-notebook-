@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="result">?</div>
+
+    <button id="start">开始</button>
+    <button id="stop">停止</button>
+    <div id="history"></div>
+
+    <script>
+        // 随机函数
+        function getRandomInt(min, max) {
+            console.log(min, max)
+            return Math.floor(Math.random() * (max - min)) + min;
+        }
+        const arr = ['张三', '李四', '王五', '赵六', '钱七']
+        // 开始按钮点击事件
+        const start = document.querySelector('#start')
+        let timer = null
+        start.addEventListener('click', function () {
+            // 随机点名
+            timer = setInterval(() => {
+                const randomInt = getRandomInt(0, arr.length)
+                console.log(randomInt)
+                result.innerHTML = arr[randomInt]
+            }, 200)
+        })
+        // 停止按钮点击事件
+        const stop = document.querySelector('#stop')
+        const history = document.querySelector('#history')
+        stop.addEventListener('click', function () {
+            // 停止随机点名
+            clearInterval(timer)
+            const randomInt = getRandomInt(0, arr.length)
+            result.innerHTML = arr[randomInt]
+            history.innerHTML += arr[randomInt] + '<br>'
+            arr.splice(randomInt, 1)
+            if (arr.length === 0) {
+                result.innerHTML = '<span style="color: red;" font-size="50px;">没有了</span>'
+                start.disabled = true
+                stop.disabled = true
+            }
+
+        })
+
+
+
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>随机抽奖</h1>
+    <p>从10个数字中随机抽取一个数字</p>
+    <div id="result" style="font-size: 48px; font-weight: bold; margin: 20px 0; height: 60px;">?</div>
+
+    <button id="startBtn">开始</button>
+    <button id="stopBtn">停止</button>
+    <div id="history" style="margin-top: 20px;"></div>
+    <script>
+        // 随机抽奖
+        let numArr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        let timer = null
+        const resultDiv = document.getElementById('result')
+        const historyDiv = document.getElementById('history')
+        const startBtn = document.getElementById('startBtn')
+        const stopBtn = document.getElementById('stopBtn')
+        //开始按钮：滚动随机数
+        startBtn.addEventListener(
+
+            'click',
+            function () {
+                if (numArr.length === 0) {
+                    alert('数组已空，无法随机抽取')
+                    return
+                }
+                if (timer) {
+                    alert('请先停止当前抽奖')
+                    return
+                }
+                // 开始滚动随机数
+                timer = setInterval(
+                    () => {
+                        let random = Math.floor(Math.random() * numArr.length)
+                        resultDiv.textContent = numArr[random]
+                    }, 50
+                )
+            })
+        //结束按钮。
+        stopBtn.addEventListener(
+            'click',
+            function () {
+                if (!timer) return
+                clearInterval(timer)
+                timer = null
+
+                // 展示被选中的内容
+                let random = Math.floor(Math.random() * numArr.length)
+                let selectedNum = numArr[random]
+                resultDiv.textContent = selectedNum
+                //删除选中的数字
+                numArr.splice(random, 1)
+                // 展示历史记录
+                let p = document.createElement('p')
+                p.textContent = `抽中: ${selectedNum}，剩余: [${numArr.join(', ')}]`
+                historyDiv.appendChild(p)
+                if (numArr.length === 0) {
+                    let p = document.createElement('p')
+                    p.textContent = '抽奖结束！'
+                    p.style.color = 'red'
+                    p.style.fontWeight = 'bold'
+                    historyDiv.appendChild(p)
+                }
+            }
+        )
+
+    </script>
+</body>
+
+</html>

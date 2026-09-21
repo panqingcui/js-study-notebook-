@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .box {
+        width: 200px;
+        height: 200px;
+        background-color: pink;
+    }
+</style>
+
+<body>
+    <div class="box" data-color="red" data-id="1001"></div>
+    <script>
+        const box = document.querySelector(".box");
+        console.log(box);
+        box.style.backgroundColor = "red";
+        box.style.width = "300px";
+        box.style.height = "300px";
+        console.log(box.dataset);
+        console.log(box.dataset.color);
+        console.log(box.dataset.id);
+    </script>
+</body>
+
+</html>

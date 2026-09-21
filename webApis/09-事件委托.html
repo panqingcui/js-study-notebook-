@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .active {
+        color: red;
+    }
+</style>
+
+<body>
+    <ul>
+        <li>第一个孩子</li>
+        <li>第二个孩子</li>
+        <li>第三个孩子</li>
+        <li>第四个孩子</li>
+        <li>第五个孩子</li>
+        <p>我是一个段落</p>
+    </ul>
+    <script>
+        // 1. 获取元素
+        const ul = document.querySelector('ul')
+        // 2. 绑定事件
+        ul.addEventListener('click', (e) => {
+            console.log(e)
+            // 2.1 检查点击的元素是否是li
+            if (e.target.tagName === 'LI') {
+                // 2.2 给当前点击的li添加active类名
+                //e.target.classList.add('active')
+                e.target.style.color = 'red'
+            }
+        })
+    </script>
+</body>
+
+</html>

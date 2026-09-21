@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        //模板字符串
+        let name = '张三'
+        let age = 18
+        let isMale = true
+        let height = null
+        document.write(`你好，${name}，你今年${age}岁`)
+        //声明变量未赋值，就是undefined
+        console.log(`age的类型是：${typeof age}`)
+        console.log(`name的类型是：${typeof name}`)
+        console.log(`isMale ${typeof isMale}`)
+        console.log(`height ${typeof height}`)
+        console.log('---------------类型转换')
+        console.log('---------------隐式转换')
+        //类型转换
+        //+号可以将数字转换为字符串
+        console.log(2 + '2')//22
+        //- * /会把字符串转成 数字
+        console.log(3 - '2')
+        console.log(3 / '2')
+        //Ø +号作为正号解析可以转换成数字型
+        // Ø 任何数据和字符串相加结果都是字符串
+        console.log('---------------显式转换')
+        console.log(`30.2  parseInt : ${parseInt('30.2')}`)
+        console.log(`30.2  parseFloat : ${parseFloat('30.2')}`)
+    </script>
+</body>
+
+</body>
+
+</html>

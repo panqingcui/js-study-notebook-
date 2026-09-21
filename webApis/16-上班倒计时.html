@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>上班倒计时</title>
+    <style>
+        /* 页面整体样式：居中、深色背景 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+        }
+
+        /* 主容器 */
+        .container {
+            text-align: center;
+            padding: 40px;
+        }
+
+        /* 标题 */
+        h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: #e94560;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #aaa;
+            margin-bottom: 40px;
+        }
+
+        /* 倒计时数字展示区域 */
+        .countdown {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        /* 单个时间块 */
+        .time-block {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px 30px;
+            min-width: 100px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .time-number {
+            font-size: 48px;
+            font-weight: bold;
+            color: #e94560;
+            display: block;
+            line-height: 1;
+        }
+
+        .time-label {
+            font-size: 14px;
+            color: #aaa;
+            margin-top: 8px;
+            display: block;
+        }
+
+        /* 分隔符 */
+        .separator {
+            font-size: 48px;
+            color: #e94560;
+            align-self: center;
+            font-weight: bold;
+        }
+
+        /* 提示信息 */
+        .message {
+            font-size: 18px;
+            color: #ddd;
+            margin-top: 20px;
+        }
+
+        .work-time {
+            font-size: 14px;
+            color: #888;
+            margin-top: 10px;
+        }
+
+        /* 已上班状态 */
+        .working {
+            display: none;
+        }
+
+        .working h2 {
+            font-size: 48px;
+            color: #4ecca3;
+            margin-bottom: 20px;
+        }
+
+        .working p {
+            font-size: 20px;
+            color: #aaa;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- 倒计时区域 -->
+        <div id="countdownArea">
+            <h1>⏰ 距离上班还有</h1>
+            <p class="subtitle">明天又是元气满满的一天！</p>
+
+            <div class="countdown">
+                <div class="time-block">
+                    <span class="time-number" id="hours">00</span>
+                    <span class="time-label">小时</span>
+                </div>
+                <span class="separator">:</span>
+                <div class="time-block">
+                    <span class="time-number" id="minutes">00</span>
+                    <span class="time-label">分钟</span>
+                </div>
+                <span class="separator">:</span>
+                <div class="time-block">
+                    <span class="time-number" id="seconds">00</span>
+                    <span class="time-label">秒</span>
+                </div>
+            </div>
+
+            <p class="message" id="message">加油！再坚持一下就能休息了~</p>
+            <p class="work-time" id="workTime"></p>
+        </div>
+
+        <!-- 已上班区域（倒计时结束后显示） -->
+        <div class="working" id="workingArea">
+            <h2>💼 该上班了！</h2>
+            <p>新的一天，新的开始，加油！</p>
+        </div>
+    </div>
+
+    <script>
+        // 获取页面元素
+        const hoursEl = document.querySelector('#hours')
+        const minutesEl = document.querySelector('#minutes')
+        const secondsEl = document.querySelector('#seconds')
+        const messageEl = document.querySelector('#message')
+        const workTimeEl = document.querySelector('#workTime')
+        const countdownArea = document.querySelector('#countdownArea')
+        const workingArea = document.querySelector('#workingArea')
+
+        // 设置上班时间为明天早晨 8:00
+        function getWorkTime() {
+            const now = new Date()
+            const workTime = new Date()
+
+            // 设置为明天
+            workTime.setDate(now.getDate() + 1)
+            // 设置为早晨 8 点
+            workTime.setHours(8, 0, 0, 0)
+
+            return workTime
+        }
+
+        const workTime = getWorkTime()
+
+        // 显示上班时间
+        const year = workTime.getFullYear()
+        const month = (workTime.getMonth() + 1).toString().padStart(2, '0')
+        const day = workTime.getDate().toString().padStart(2, '0')
+        workTimeEl.textContent = `上班时间：${year}年${month}月${day}日 08:00`
+
+        // 更新倒计时的函数
+        function updateCountdown() {
+            const now = new Date()
+            // 计算时间差（毫秒）
+            const diff = workTime - now
+
+            // 如果已经到了上班时间或过了上班时间
+            if (diff <= 0) {
+                clearInterval(timer)
+                countdownArea.style.display = 'none'
+                workingArea.style.display = 'block'
+                return
+            }
+
+            // 将毫秒转换为时分秒
+            const hours = Math.floor(diff / (1000 * 60 * 60))
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000)
+
+            // 更新页面显示（补零）
+            hoursEl.innerHTML = hours.toString().padStart(2, '0')
+            minutesEl.textContent = minutes.toString().padStart(2, '0')
+            secondsEl.textContent = seconds.toString().padStart(2, '0')
+
+            // 根据剩余时间切换提示语
+            if (hours < 1) {
+                messageEl.textContent = '快来不及了！准备好出发了吗？'
+            } else if (hours < 4) {
+                messageEl.textContent = '时间不多了，早点休息吧~'
+            } else {
+                messageEl.textContent = '还有充足的时间，好好休息！'
+            }
+        }
+
+        // 立即执行一次，避免页面加载时的延迟
+        updateCountdown()
+
+        // 每秒更新一次
+        const timer = setInterval(updateCountdown, 1000)
+    </script>
+</body>
+
+</html>

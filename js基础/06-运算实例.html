@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>判断一个数是4的倍数，且不是100的倍数</title>
+</head>
+
+<body>
+    <script>
+        //需求：用户输入一个，判断这个数能被4整除，但是不能被100整除,满足条件，页面弹出true，否则弹出false
+        let num = prompt('请输入一个数：')
+        let result = num % 4 == 0 && num % 100 != 0
+        document.write(result)
+        let a = 3 > 5 && 2 < 7 && 3 == 4
+        console.log(a);//false 一假则假
+        let b = 3 <= 4 || 3 > 1 || 3 != 2
+        console.log(b);//true 一真则真
+        let c = 2 === "2"
+        console.log(c);//false 类型不同，不相等
+        let d = !c || b && a
+        console.log(d);//true 一真则真
+
+
+
+    </script>
+</body>
+
+</html>

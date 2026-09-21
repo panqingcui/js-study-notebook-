@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>异常处理</h1>
+    <script>
+        // 异常处理
+        try {
+            throw new Error('这是一个错误');
+        } catch (error) {
+            console.log(error.message);
+        } finally {
+            console.log('finally');
+        }
+
+        console.log('改变this指向');
+        function sayHello() {
+            console.log(this);
+        }
+        sayHello();
+        sayHello.call({ name: '张三' });
+        sayHello.apply({ name: '李四' });
+    </script>
+</body>
+
+</html>

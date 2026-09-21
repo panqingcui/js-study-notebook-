@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>面向对象</h1>
+    <p>对象是一种数据类型，它可以存储多个数据项，每个数据项都有自己的属性和方法。</p>
+    <p>prototype属性：每个对象都有一个prototype属性，它指向一个原型对象。</p>
+    <p>原型对象：每个对象都有一个原型对象，它包含了对象的属性和方法。</p>
+    <script>
+        const obj = {}
+        console.log(obj.prototype)
+
+        class User {
+            constructor(name, age) {
+                this.name = name
+                this.age = age
+                this.age = age
+            }
+            sayName() {
+                console.log(this.name)
+            }
+        }
+        const user = new User('张三', 18)
+        const user1 = new User('李四', 23)
+        console.log(user.sayName === user1.sayName)
+
+        Array.prototype.max = function () {
+            return Math.max.apply(null, this)
+        }
+        Array.prototype.sum = function () {
+            return this.reduce((pre, cur) => pre + cur, 0)
+        }
+        console.log([1, 2, 3, 4, 5].max())
+        console.log([1, 2, 3, 4, 5].sum())
+
+        console.log('-----------------闭包-----------------')
+        function outer() {
+            const a = 10
+            function inner() {
+                console.log(a)
+            }
+            return inner
+        }
+        const inner = outer()
+        inner()
+
+        Array.prototype.max = function () {
+         //   return Math.max(...this)
+           return Math.max.apply(null, this)
+        }
+        console.log([1, 2, 3, 4, 5].max())
+    </script>
+</body>
+
+</html>

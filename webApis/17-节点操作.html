@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="container" name="container">
+        <p id="p1">这是一个段落</p>
+        <div id="div1">这是一个div1</div>
+        <div id="div2">这是一个div2</div>
+    </div>
+    <ul>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+        <li>5</li>
+    </ul>
+
+    <script>
+        // 1. 获取元素
+        const container = document.querySelector('#container')
+        const p = document.querySelector('p')
+        console.log(container)
+        //2. 获取子节点
+        const childNodes = container.children
+        console.log('childNodes的长度是：', childNodes.length)
+        for (let i = 0; i < childNodes.length; i++) {
+            console.log('当前节点是：', childNodes[i])
+            const item = childNodes[i]
+            console.log('前一个兄弟文本节点是：', item.previousSibling.textContent)
+            console.log('前一个兄弟元素节点是：', item.previousElementSibling?.textContent)
+            console.log('后一个兄弟文本节点是：', item.nextSibling.textContent)
+            console.log('后一个兄弟元素节点是：', item.nextElementSibling?.textContent)
+
+        }
+        //第一个子节点是文本节点
+        console.log('第一个子节点是文本节点：', container.firstChild)
+        //最后一个子节点是div2
+        console.log('最后一个子节点是div2：', container.lastChild)
+
+        // 3.获取父节点
+        const parentNode = p.parentNode
+        console.log('段落的父节点是：', parentNode)
+        console.log('段落的父节点的id属性是：', parentNode.id, parentNode.getAttribute('name'))
+        // 4. 获取ul的子节点
+        const ul = document.querySelector('ul')
+        console.log('ul的子节点是：', ul.children)
+        const li2 = document.querySelector('ul li:nth-child(2)')
+        console.log(li2.previousElementSibling)  // 上一个兄弟
+        console.log(li2.nextElementSibling)  // 下一个兄弟
+
+        console.log('创建节点')
+        const div = document.createElement('div')
+        document.body.appendChild(div)
+        div.innerHTML = '我是创建的div节点'
+        div.style.color = 'red'
+
+        const ul2 = document.createElement('ul')
+        div.appendChild(ul2)
+        ul2.innerHTML = '我是创建的ul节点'
+        ul2.style.color = 'blue'
+
+        const li3 = document.createElement('li')
+        ul2.appendChild(li3)
+        li3.innerHTML = '我是创建的li节点'
+        li3.style.color = 'red'
+
+        const li4 = document.createElement('li')
+        ul2.insertBefore(li4, li3)
+        li4.innerHTML = '我是老大'
+        li4.style.color = 'green'
+
+
+
+    </script>
+</body>
+
+</html>

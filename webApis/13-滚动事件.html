@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>滚动事件</title>
+    <style>
+        /* 占位内容，用于产生页面滚动条 */
+        .content {
+            height: 2000px;
+            background: linear-gradient(to bottom, #e3f2fd, #bbdefb);
+            padding: 20px;
+        }
+
+        .content h1 {
+            text-align: center;
+            padding-top: 50px;
+            color: #333;
+        }
+
+        .content p {
+            text-align: center;
+            color: #666;
+            margin-top: 20px;
+        }
+
+        /* 目标 div：初始隐藏，滚动超过 100px 后显示 */
+        #target {
+            display: none;
+            padding: 40px;
+            margin: 0 auto;
+            border: 2px solid #409eff;
+            width: 300px;
+            text-align: center;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            /* 固定定位，悬浮在页面右下角 */
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 100;
+        }
+
+        #target.show {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 大量内容，用于产生滚动条 -->
+    <div class="content">
+        <h1>向下滚动页面</h1>
+        <p>继续滚动，当滚动距离超过 100px 时，右下角会出现一个悬浮框</p>
+    </div>
+
+    <!-- 目标元素：滚动后显示 -->
+    <div id="target">我是一个 div 元素<br>滚动超过 100px 后显示</div>
+
+    <script>
+        const target = document.querySelector('#target')
+
+        // 监听 window 滚动事件
+        window.addEventListener('scroll', function () {
+            // 获取滚动条距离顶部的距离（兼容写法）
+            const scrollTop = window.scrollY || document.documentElement.scrollTop
+
+            console.log('滚动条距离顶部的距离: ' + scrollTop)
+
+            // 当滚动超过 100px 时，显示目标元素
+            if (scrollTop > 100) {
+                target.classList.add('show')
+            } else {
+                target.classList.remove('show')
+            }
+        })
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div data-index="0">1</div>
+    <div data-index="1">2</div>
+    <div data-index="2">3</div>
+    <div data-index="3">4</div>
+    <div data-index="4">5</div>
+    <script>
+        const divs = document.querySelector('div')
+        console.log(divs.dataset)
+        // 遍历所有div,获取每个div的自定义属性index
+        // divs.forEach(item => {
+        //     console.log(item.dataset.index)
+        // })
+    </script>
+</body>
+
+</html>

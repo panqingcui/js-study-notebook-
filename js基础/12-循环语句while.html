@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+
+        let i = 0
+        while (i < 10) {
+            document.write(i)
+            i++
+        }
+
+        i = 0
+        while (i < 10) {
+            document.write('<br>月薪过万')
+            i++
+        }
+        document.write('<br>')
+        i = 1
+        let total = 0
+        //计算1-100之间的所有偶数和
+        let evenTotal = 0
+        while (i <= 100) {
+            document.write(' ' + i)
+            i++
+            total += i
+            if (i % 2 == 0) {
+                evenTotal += i
+            }
+        }
+        document.write('<br>1-100的和是：' + total)
+        document.write('<br>1-100之间的偶数偶数和是：' + evenTotal)
+
+        // let msg = prompt('你爱我吗：')
+        // while (msg != '爱') {
+        //     msg = prompt('你爱我吗：')
+        // }
+        while (true) {
+            msg = prompt('你爱我吗：')
+            if (msg == '爱') {
+                break
+            }
+        }
+        document.write('<br>你爱我了')
+
+    </script>
+</body>
+
+</html>

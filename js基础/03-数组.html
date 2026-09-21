@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        //数组的定义
+        let arr = [1, 2, 3, 4, 5]
+        console.log(arr)
+
+        //数组的遍历
+        for (let i = 0; i < arr.length; i++) {
+            console.log(arr[i])
+        }
+        console.log('-----------------')
+        //数组的遍历2
+        for (let item of arr) {
+            console.log(item)
+        }
+        console.log('-----------------forEach')
+        //.forEach()    
+        arr.forEach(function (item) {
+            console.log(item)
+        })
+        console.log('-----------------forEach2')
+
+        //圆的面积 计算的案例
+        let radius = prompt('请输入圆的半径')
+        let area = Math.PI * radius * radius
+        console.log('圆的面积是：' + area)
+        document.write('圆的半径是：' + radius + '<br>圆的面积是：' + area)
+    </script>
+</body>
+
+</html>

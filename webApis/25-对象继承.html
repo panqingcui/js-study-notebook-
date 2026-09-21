@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>对象继承</h1>
+    <p>对象继承是一种将一个对象的属性和方法传递给另一个对象的技术。</p>
+
+    <script>
+        class User {
+            constructor(name, age) {
+                this.name = name
+                this.age = age
+            }
+            eat() {
+                console.log('我在吃')
+            }
+        }
+
+        class Student extends User {
+            constructor(name, age, id) {
+                super(name, age)
+                this.id = id
+            }
+        }
+        const user = new User('张三', 18)
+        console.log(user)
+        user.eat()
+        console.log(user.__proto__)
+        console.log(user.__proto__ === User.prototype)
+        console.log('-----------------继承-----------------')
+        const student = new Student('张三', 18, 1001)
+        console.log(student)
+        student.eat()
+        console.log(student.__proto__)
+        console.log(student.__proto__ === Student.prototype)
+    </script>
+</body>
+
+</html>
