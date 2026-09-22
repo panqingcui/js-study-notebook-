@@ -1,41 +1,33 @@
 <template>
   <div class="person">
-    <div class="person">
-      姓：<input type="text" v-model="firstName" /> <br />
-      名：<input type="text" v-model="lastName" /> <br />
-      全名：<span>{{ fullName }}</span> <br />
-      <button @click="changeFullName">全名改为：li-si</button>
-    </div>
+    <h1 ref="title1">尚硅谷</h1>
+    <h2 ref="title2">前端</h2>
+    <h3 ref="title3">Vue</h3>
+    <input type="text" ref="inpt" /> <br /><br />
+    <button @click="showLog">点我打印内容</button>
   </div>
 </template>
 
 <script setup lang="ts">
-// 使用reactive定义响应式数据
-import { ref, computed } from 'vue' //引入computed
+import { ref } from 'vue'
 
-let firstName = ref('zhang')
-let lastName = ref('san')
-// 计算属性——既读取又修改
-// 计算属性的值是根据依赖的响应式数据变化而变化的
-let fullName = computed({
-  // 读取
-  get() {
-    return firstName!.value + '-' + lastName!.value
-  },
-  // 修改
-  set(val) {
-    console.log('有人修改了fullName', val)
-    firstName.value = val.split('-')[0] ?? ''
-    lastName.value = val.split('-')[1] ?? ''
-    //第二种写法
-    //const [str1,str2] = val.split('-')
-    //firstName.value = str1
-    //lastName.value = str2
-  },
-})
+let title1 = ref()
+let title2 = ref()
+let title3 = ref()
+const inpt = ref<HTMLInputElement | null>(null)
 
-function changeFullName() {
-  fullName.value = 'li-si' //引起set的val变化
+const showLog = () => {
+  // 打印内容
+
+  /************************************/
+
+  // 通过ref获取元素
+  console.log(title1.value?.innerText)
+  console.log(title2.value?.innerText)
+  console.log(title3.value?.innerText)
+
+  // 如果要用原生 DOM API，必须给元素加 id
+  // const t1 = document.getElementById('xxx')  // 需要模板里有 id="xxx"
 }
 </script>
 
