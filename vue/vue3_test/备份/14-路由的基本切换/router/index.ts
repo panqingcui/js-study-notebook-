@@ -1,8 +1,8 @@
 // 路由配置
 import { createRouter, createWebHashHistory } from 'vue-router'
-import Home from '@/components/Home.vue'
-import About from '@/components/About.vue'
-import News from '@/components/News.vue'
+import Home from '@/views/Home.vue'
+import About from '@/views/About.vue'
+import News from '@/views/News.vue'
 // 路由实例
 const router = createRouter({
   history: createWebHashHistory(), // 哈希模式

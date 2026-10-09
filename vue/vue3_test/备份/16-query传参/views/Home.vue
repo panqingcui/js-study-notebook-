@@ -1,11 +1,11 @@
 <template>
-  <div class="news">
-    <h2>新闻</h2>
+  <div class="home">
+    <h2>首页</h2>
   </div>
 </template>
 <script setup lang="ts"></script>
 <style scoped>
-.news {
+.home {
   display: flex;
   justify-content: center;
   align-items: center;
