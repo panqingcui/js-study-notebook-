@@ -38,5 +38,10 @@ export default createRouter({
       name: 'provide-inject',
       component: () => import('@/views/07_provide-inject/Father.vue'),
     },
+    {
+      path: '/pinia',
+      name: 'pinia',
+      component: () => import('@/views/08_pinia/Father.vue'),
+    },
   ],
 })
