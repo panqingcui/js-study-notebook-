@@ -31,8 +31,14 @@
             >8. pinia</router-link
           >
           <router-link active-class="active" class="list-group-item" to="/slot"
-            >9. slot</router-link
-          >
+            >9. slot
+          </router-link>
+          <router-link active-class="active" class="list-group-item" to="/slot-named"
+            >10. slot-具名插槽
+          </router-link>
+          <router-link active-class="active" class="list-group-item" to="/slot-scope"
+            >11. slot-作用域插槽
+          </router-link>
         </div>
       </div>
       <div class="col-9">

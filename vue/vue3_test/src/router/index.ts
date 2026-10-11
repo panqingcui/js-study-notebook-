@@ -43,5 +43,20 @@ export default createRouter({
       name: 'pinia',
       component: () => import('@/views/08_pinia/Father.vue'),
     },
+    {
+      path: '/slot',
+      name: 'slot',
+      component: () => import('@/views/09_slot_默认插槽/Father.vue'),
+    },
+    {
+      path: '/slot-named',
+      name: 'slot-named',
+      component: () => import('@/views/10_slot_具名插槽/Father.vue'),
+    },
+    {
+      path: '/slot-scope',
+      name: 'slot-scope',
+      component: () => import('@/views/11_slot_作用域插槽/Father.vue'),
+    },
   ],
 })
