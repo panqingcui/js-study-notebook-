@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>System Architecture</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;600&family=Geist+Mono&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background: #f5f5f5;
+        font-family:
+          'Geist',
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 48px 24px;
+        min-height: 100vh;
+      }
+      .diagram-wrapper {
+        width: 100%;
+        max-width: 960px;
+        overflow-x: auto;
+      }
+      .diagram-wrapper svg {
+        display: block;
+        width: 100%;
+        height: auto;
+        min-width: 960px;
+      }
+      .eyebrow {
+        font-family: 'Geist Mono', monospace;
+        font-size: 12px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #2d3142;
+        opacity: 0.5;
+        margin-bottom: 8px;
+      }
+      h1 {
+        font-family: 'Instrument Serif', 'Times New Roman', serif;
+        font-size: 32px;
+        font-weight: 400;
+        color: #2d3142;
+        margin-bottom: 32px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="eyebrow">Architecture</div>
+    <h1>System Architecture</h1>
+
+    <div class="diagram-wrapper">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 960 420"
+        role="img"
+        aria-labelledby="arch-title arch-desc"
+        style="min-width: 960px"
+      >
+        <title id="arch-title">System Architecture</title>
+        <desc id="arch-desc">
+          Web client requests flow through API gateway to microservices, which read and write to
+          PostgreSQL and Redis.
+        </desc>
+
+        <defs>
+          <!-- Arrow markers -->
+          <marker
+            id="arrow-muted"
+            viewBox="0 0 10 6"
+            refX="10"
+            refY="3"
+            markerWidth="8"
+            markerHeight="6"
+            orient="auto"
+          >
+            <path d="M0,0 L10,3 L0,6 Z" fill="#2d3142" opacity="0.35" />
+          </marker>
+          <marker
+            id="arrow-accent"
+            viewBox="0 0 10 6"
+            refX="10"
+            refY="3"
+            markerWidth="8"
+            markerHeight="6"
+            orient="auto"
+          >
+            <path d="M0,0 L10,3 L0,6 Z" fill="#bf4520" />
+          </marker>
+          <marker
+            id="arrow-link"
+            viewBox="0 0 10 6"
+            refX="10"
+            refY="3"
+            markerWidth="8"
+            markerHeight="6"
+            orient="auto"
+          >
+            <path d="M0,0 L10,3 L0,6 Z" fill="#4a90d9" />
+          </marker>
+
+          <!-- Background pattern -->
+          <pattern id="dots" x="0" y="0" width="16" height="16" patternUnits="userSpaceOnUse">
+            <circle cx="2" cy="2" r="1" fill="#2d3142" opacity="0.06" />
+          </pattern>
+        </defs>
+
+        <!-- Background -->
+        <rect width="960" height="420" fill="#f5f5f5" />
+        <rect width="960" height="360" fill="url(#dots)" />
+
+        <!-- ARROWS (drawn before boxes) -->
+        <!-- Web Client → API Gateway -->
+        <path
+          d="M240,180 L320,180"
+          stroke="#2d3142"
+          stroke-width="1.5"
+          opacity="0.35"
+          marker-end="url(#arrow-muted)"
+          fill="none"
+        />
+        <rect x="252" y="166" width="56" height="18" fill="#f5f5f5" rx="2" />
+        <text
+          x="280"
+          y="179"
+          text-anchor="middle"
+          font-family="Geist Mono, monospace"
+          font-size="11"
+          fill="#2d3142"
+          opacity="0.5"
+        >
+          HTTPS
+        </text>
+
+        <!-- API Gateway → Microservices -->
+        <path
+          d="M480,180 L560,180"
+          stroke="#bf4520"
+          stroke-width="1.5"
+          marker-end="url(#arrow-accent)"
+          fill="none"
+        />
+        <rect x="492" y="166" width="56" height="18" fill="#f5f5f5" rx="2" />
+        <text
+          x="520"
+          y="179"
+          text-anchor="middle"
+          font-family="Geist Mono, monospace"
+          font-size="11"
+          fill="#bf4520"
+        >
+          ROUTE
+        </text>
+
+        <!-- Microservices → PostgreSQL -->
+        <path
+          d="M720,200 L720,260"
+          stroke="#4a90d9"
+          stroke-width="1.5"
+          marker-end="url(#arrow-link)"
+          fill="none"
+        />
+        <rect x="692" y="218" width="56" height="18" fill="#f5f5f5" rx="2" />
+        <text
+          x="720"
+          y="231"
+          text-anchor="middle"
+          font-family="Geist Mono, monospace"
+          font-size="11"
+          fill="#4a90d9"
+        >
+          SQL
+        </text>
+
+        <!-- Microservices → Redis -->
+        <path
+          d="M760,200 L800,260"
+          stroke="#4a90d9"
+          stroke-width="1.5"
+          marker-end="url(#arrow-link)"
+          fill="none"
+        />
+        <rect x="752" y="218" width="56" height="18" fill="#f5f5f5" rx="2" />
+        <text
+          x="780"
+          y="231"
+          text-anchor="middle"
+          font-family="Geist Mono, monospace"
+          font-size="11"
+          fill="#4a90d9"
+        >
+          CACHE
+        </text>
+
+        <!-- NODES -->
+        <!-- Web Client -->
+        <rect
+          x="80"
+          y="140"
+          width="160"
+          height="80"
+          fill="#ffffff"
+          stroke="#2d3142"
+          stroke-width="1"
+          rx="6"
+        />
+        <rect x="80" y="140" width="48" height="16" fill="#2d3142" rx="2" />
+        <text x="104" y="152" font-family="Geist Mono, monospace" font-size="9" fill="#f5f5f5">
+          CLIENT
+        </text>
+        <text
+          x="160"
+          y="176"
+          text-anchor="middle"
+          font-family="Geist, sans-serif"
+          font-weight="600"
+          font-size="15"
+          fill="#2d3142"
+        >
+          Web Client
+        </text>
+        <text
+          x="160"
+          y="196"
+          text-anchor="middle"
+          font-family="Geist Mono, monospace"
+          font-size="11"
+          fill="#2d3142"
+          opacity="0.45"
+        >
+          Browser / SPA
+        </text>
+
+        <!-- API Gateway -->
+        <rect
+          x="320"
+          y="140"
+          width="160"
+          height="80"
+          fill="#ffffff"
+          stroke="#2d3142"
+          stroke-width="1"
+          rx="6"
+        />
+        <rect x="320" y="140" width="56" height="16" fill="#2d3142" rx="2" />
+        <text x="348" y="152" font-family="Geist Mono, monospace" font-size="9" fill="#f5f5f5">
+          GATEWAY
+        </text>
+        <text
+          x="400"
+          y="176"
+          text-anchor="middle"
+          font-family="Geist, sans-serif"
+          font-weight="600"
+          font-size="15"
+          fill="#2d3142"
+        >
+          API Gateway
+        </text>
+        <text
+          x="400"
+          y="196"
+          text-anchor="middle"
+          font-family="Geist Mono, monospace"
+          font-size="11"
+          fill="#2d3142"
+          opacity="0.45"
+        >
+          Kong / Nginx
+        </text>
+
+        <!-- Microservices (accent - focal node) -->
+        <rect
+          x="560"
+          y="140"
+          width="160"
+          height="80"
+          fill="#bf4520"
+          stroke="#bf4520"
+          stroke-width="1"
+          rx="6"
+        />
+        <rect x="560" y="140" width="72" height="16" fill="#8a2f14" rx="2" />
+        <text x="596" y="152" font-family="Geist Mono, monospace" font-size="9" fill="#f5f5f5">
+          SERVICES
+        </text>
+        <text
+          x="640"
+          y="176"
+          text-anchor="middle"
+          font-family="Geist, sans-serif"
+          font-weight="600"
+          font-size="15"
+          fill="#ffffff"
+        >
+          Microservices
+        </text>
+        <text
+          x="640"
+          y="196"
+          text-anchor="middle"
+          font-family="Geist Mono, monospace"
+          font-size="11"
+          fill="#ffffff"
+          opacity="0.85"
+        >
+          Node.js / Go
+        </text>
+
+        <!-- PostgreSQL -->
+        <rect
+          x="640"
+          y="280"
+          width="160"
+          height="80"
+          fill="#ffffff"
+          stroke="#2d3142"
+          stroke-width="1"
+          rx="6"
+        />
+        <rect x="640" y="280" width="48" height="16" fill="#2d3142" rx="2" />
+        <text x="664" y="292" font-family="Geist Mono, monospace" font-size="9" fill="#f5f5f5">
+          STORE
+        </text>
+        <text
+          x="720"
+          y="316"
+          text-anchor="middle"
+          font-family="Geist, sans-serif"
+          font-weight="600"
+          font-size="15"
+          fill="#2d3142"
+        >
+          PostgreSQL
+        </text>
+        <text
+          x="720"
+          y="336"
+          text-anchor="middle"
+          font-family="Geist Mono, monospace"
+          font-size="11"
+          fill="#2d3142"
+          opacity="0.45"
+        >
+          Persistent Data
+        </text>
+
+        <!-- Redis -->
+        <rect
+          x="840"
+          y="280"
+          width="160"
+          height="80"
+          fill="#ffffff"
+          stroke="#2d3142"
+          stroke-width="1"
+          rx="6"
+        />
+        <rect x="840" y="280" width="48" height="16" fill="#2d3142" rx="2" />
+        <text x="864" y="292" font-family="Geist Mono, monospace" font-size="9" fill="#f5f5f5">
+          CACHE
+        </text>
+        <text
+          x="920"
+          y="316"
+          text-anchor="middle"
+          font-family="Geist, sans-serif"
+          font-weight="600"
+          font-size="15"
+          fill="#2d3142"
+        >
+          Redis
+        </text>
+        <text
+          x="920"
+          y="336"
+          text-anchor="middle"
+          font-family="Geist Mono, monospace"
+          font-size="11"
+          fill="#2d3142"
+          opacity="0.45"
+        >
+          Session / Cache
+        </text>
+
+        <!-- LEGEND -->
+        <rect x="0" y="370" width="960" height="50" fill="#f5f5f5" />
+        <line
+          x1="0"
+          y1="370"
+          x2="960"
+          y2="370"
+          stroke="#2d3142"
+          stroke-width="0.5"
+          opacity="0.15"
+        />
+
+        <!-- Legend items -->
+        <line
+          x1="40"
+          y1="395"
+          x2="80"
+          y2="395"
+          stroke="#2d3142"
+          stroke-width="1.5"
+          opacity="0.35"
+          marker-end="url(#arrow-muted)"
+        />
+        <text
+          x="90"
+          y="399"
+          font-family="Geist, sans-serif"
+          font-size="12"
+          fill="#2d3142"
+          opacity="0.5"
+        >
+          Client Request
+        </text>
+
+        <line
+          x1="220"
+          y1="395"
+          x2="260"
+          y2="395"
+          stroke="#bf4520"
+          stroke-width="1.5"
+          marker-end="url(#arrow-accent)"
+        />
+        <text
+          x="270"
+          y="399"
+          font-family="Geist, sans-serif"
+          font-size="12"
+          fill="#2d3142"
+          opacity="0.5"
+        >
+          Routing
+        </text>
+
+        <line
+          x1="340"
+          y1="395"
+          x2="380"
+          y2="395"
+          stroke="#4a90d9"
+          stroke-width="1.5"
+          marker-end="url(#arrow-link)"
+        />
+        <text
+          x="390"
+          y="399"
+          font-family="Geist, sans-serif"
+          font-size="12"
+          fill="#2d3142"
+          opacity="0.5"
+        >
+          Data Access
+        </text>
+
+        <rect
+          x="520"
+          y="388"
+          width="16"
+          height="16"
+          fill="#bf4520"
+          stroke="#bf4520"
+          stroke-width="1"
+          rx="2"
+        />
+        <text
+          x="546"
+          y="400"
+          font-family="Geist, sans-serif"
+          font-size="12"
+          fill="#2d3142"
+          opacity="0.5"
+        >
+          Focal Component
+        </text>
+      </svg>
+    </div>
+  </body>
+</html>

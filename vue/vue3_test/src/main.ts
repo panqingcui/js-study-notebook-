@@ -5,9 +5,8 @@ import { createApp } from 'vue'
 import App from './App.vue'
 
 import { createPinia } from 'pinia'
-import router from './router'
 // 创建pinia实例
 const pinia = createPinia()
 
 // 挂载全局组件并使用路由和pinia
-createApp(App).use(pinia).use(router).mount('#app')
+createApp(App).use(pinia).mount('#app')

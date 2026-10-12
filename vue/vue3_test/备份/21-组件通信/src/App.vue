@@ -1,0 +1,68 @@
+<template>
+  <div class="container-fluid wraper">
+    <h1 class="title">Vue3 组件间通信</h1>
+    <hr />
+    <div class="row">
+      <div class="col-3">
+        <!-- 导航区 -->
+        <div class="list-group">
+          <router-link active-class="active" class="list-group-item" to="/props"
+            >1. props</router-link
+          >
+          <router-link active-class="active" class="list-group-item" to="/event"
+            >2. 自定义事件</router-link
+          >
+          <router-link active-class="active" class="list-group-item" to="/mitt"
+            >3. mitt</router-link
+          >
+          <router-link active-class="active" class="list-group-item" to="/model"
+            >4. v-model</router-link
+          >
+          <router-link active-class="active" class="list-group-item" to="/attrs"
+            >5. $attrs</router-link
+          >
+          <router-link active-class="active" class="list-group-item" to="/ref-parent"
+            >6. <span class="small">$refs、$parent</span></router-link
+          >
+          <router-link active-class="active" class="list-group-item" to="/provide-inject"
+            >7. provide、inject</router-link
+          >
+          <router-link active-class="active" class="list-group-item" to="/pinia"
+            >8. pinia</router-link
+          >
+          <router-link active-class="active" class="list-group-item" to="/slot"
+            >9. slot
+          </router-link>
+          <router-link active-class="active" class="list-group-item" to="/slot-named"
+            >10. slot-具名插槽
+          </router-link>
+          <router-link active-class="active" class="list-group-item" to="/slot-scope"
+            >11. slot-作用域插槽
+          </router-link>
+        </div>
+      </div>
+      <div class="col-9">
+        <div class="card">
+          <div class="card-body">
+            <!-- 占位一个展示区 -->
+            <router-view></router-view>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<script setup lang="ts"></script>
+<style scoped>
+.wraper .title {
+  padding: 20px;
+  text-align: center;
+  min-width: 610px;
+}
+.wraper .small {
+  font-size: 15px;
+}
+.wraper .list-group-item {
+  min-width: 230px;
+}
+</style>

@@ -1,68 +1,39 @@
 <template>
-  <div class="container-fluid wraper">
-    <h1 class="title">Vue3 组件间通信</h1>
+  <div class="app">
+    <h2>姓名：{{ person.name }}</h2>
+    <h2>年龄：{{ person.age }}</h2>
+    <h2>性别：{{ person.sex }}</h2>
+    <h2>姓名：{{ person.name }}</h2>
+    <button @click="person.age += 1">修改年龄</button>
     <hr />
-    <div class="row">
-      <div class="col-3">
-        <!-- 导航区 -->
-        <div class="list-group">
-          <router-link active-class="active" class="list-group-item" to="/props"
-            >1. props</router-link
-          >
-          <router-link active-class="active" class="list-group-item" to="/event"
-            >2. 自定义事件</router-link
-          >
-          <router-link active-class="active" class="list-group-item" to="/mitt"
-            >3. mitt</router-link
-          >
-          <router-link active-class="active" class="list-group-item" to="/model"
-            >4. v-model</router-link
-          >
-          <router-link active-class="active" class="list-group-item" to="/attrs"
-            >5. $attrs</router-link
-          >
-          <router-link active-class="active" class="list-group-item" to="/ref-parent"
-            >6. <span class="small">$refs、$parent</span></router-link
-          >
-          <router-link active-class="active" class="list-group-item" to="/provide-inject"
-            >7. provide、inject</router-link
-          >
-          <router-link active-class="active" class="list-group-item" to="/pinia"
-            >8. pinia</router-link
-          >
-          <router-link active-class="active" class="list-group-item" to="/slot"
-            >9. slot
-          </router-link>
-          <router-link active-class="active" class="list-group-item" to="/slot-named"
-            >10. slot-具名插槽
-          </router-link>
-          <router-link active-class="active" class="list-group-item" to="/slot-scope"
-            >11. slot-作用域插槽
-          </router-link>
-        </div>
-      </div>
-      <div class="col-9">
-        <div class="card">
-          <div class="card-body">
-            <!-- 占位一个展示区 -->
-            <router-view></router-view>
-          </div>
-        </div>
-      </div>
-    </div>
+    <h2>姓名：{{ msg }}</h2>
+    <input v-model="msg" placeholder="请输入姓名" />
   </div>
 </template>
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { markRaw, reactive, toRaw } from 'vue'
+// 引入自定义的useCustomRef函数
+import useCustomRef from './useCustomRef'
+
+let { msg } = useCustomRef('张三', 1000)
+let person = reactive({
+  name: '张三',
+  age: 18,
+  sex: '男',
+})
+// 将响应式对象转换为普通对象
+let person2 = toRaw(person)
+console.log('响应式对象', person)
+console.log('普通对象', person2)
+</script>
 <style scoped>
-.wraper .title {
-  padding: 20px;
-  text-align: center;
-  min-width: 610px;
+.app {
+  background-color: #ddd;
+  border-radius: 10px;
+  box-shadow: 0 0 10px;
+  padding: 10px;
 }
-.wraper .small {
-  font-size: 15px;
-}
-.wraper .list-group-item {
-  min-width: 230px;
+button {
+  margin: 0 5px;
 }
 </style>
