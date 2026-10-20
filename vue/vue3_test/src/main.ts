@@ -1,12 +1,13 @@
 // 引入全局样式
 // 引入全局组件
 import { createApp } from 'vue'
-// 引入全局组件
 import App from './App.vue'
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
 
 import { createPinia } from 'pinia'
-// 创建pinia实例
+import router from './router'
+
 const pinia = createPinia()
 
-// 挂载全局组件并使用路由和pinia
-createApp(App).use(pinia).mount('#app')
+createApp(App).use(pinia).use(ElementPlus).use(router).mount('#app')
